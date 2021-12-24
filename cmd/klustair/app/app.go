@@ -1,6 +1,7 @@
 package app
 
 import (
+	"github.com/klustair/klustair-go/pkg/klustair"
 	"github.com/urfave/cli/v2"
 )
 
@@ -116,9 +117,28 @@ func NewApp(version string) *cli.App {
 	app.Version = version
 	app.Usage = "A simple and comprehensive vulnerability scanner for kubernetes"
 	app.EnableBashCompletion = true
+	app.Action = klustair.RunCli
 
 	flags := append(globalFlags, imageFlags...)
 	app.Flags = flags
-
+	/*
+		app.Commands = []*cli.Command{
+			RunCommand(),
+		}
+	*/
 	return app
 }
+
+/*
+// NewImageCommand is the factory method to add image command
+func RunCommand() *cli.Command {
+	return &cli.Command{
+		Name:      "image",
+		Aliases:   []string{"i"},
+		ArgsUsage: "image_name",
+		Usage:     "scan an image",
+		Action:    artifact.ImageRun,
+		Flags:     imageFlags,
+	}
+}
+*/
