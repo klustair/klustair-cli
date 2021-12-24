@@ -5,15 +5,15 @@ import (
 	"log"
 	"os"
 
-	"github.com/klustair/klustair-go/pkg/commands"
+	"github.com/klustair/klustair-go/cmd/klustair/app"
 )
 
 //go:embed VERSION
 var version string
 
 func main() {
-	app := commands.NewApp(version)
-	err := app.Run(os.Args)
+	cli := app.NewApp(version)
+	err := cli.Run(os.Args)
 	if err != nil {
 		log.Fatal(err)
 	}
