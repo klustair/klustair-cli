@@ -7,9 +7,9 @@ import (
 )
 
 type Options struct {
-	Namespaces           string
-	NamespacesBlacklist  string
-	KubeAudit            string
+	Namespaces           []string
+	NamespacesBlacklist  []string
+	KubeAudit            []string
 	Trivy                bool
 	Label                string
 	TrivyCredentialsPath string
@@ -35,9 +35,9 @@ func Run(opt Options) error {
 
 func loadOpts(ctx *cli.Context) (Options, error) {
 	opt := Options{
-		Namespaces:           ctx.String("namespaces"),
-		NamespacesBlacklist:  ctx.String("namespacesblacklist"),
-		KubeAudit:            ctx.String("kubeaudit"),
+		Namespaces:           ctx.StringSlice("namespaces"),
+		NamespacesBlacklist:  ctx.StringSlice("namespacesblacklist"),
+		KubeAudit:            ctx.StringSlice("kubeaudit"),
 		Trivy:                ctx.Bool("trivy"),
 		Label:                ctx.String("label"),
 		TrivyCredentialsPath: ctx.String("repocredentialspath"),

@@ -6,25 +6,23 @@ import (
 )
 
 var (
-	namespacesFlag = cli.StringFlag{
+	namespacesFlag = cli.StringSliceFlag{
 		Name:    "namespaces",
 		Aliases: []string{"n"},
-		Value:   "",
 		Usage:   "Coma separated whitelist of Namespaces to check",
 		EnvVars: []string{"KLUSTAIR_NAMESPACES"},
 	}
-	namespacesblacklistFlag = cli.StringFlag{
+	namespacesblacklistFlag = cli.StringSliceFlag{
 		Name:    "namespacesblacklist",
 		Aliases: []string{"N"},
-		Value:   "",
 		Usage:   "Coma separated whitelist of Namespaces to check",
 		EnvVars: []string{"KLUSTAIR_NAMESPACESBLACKLIST"},
 	}
 
-	kubeauditFlag = cli.StringFlag{
+	kubeauditFlag = cli.StringSliceFlag{
 		Name:    "kubeaudit",
 		Aliases: []string{"k"},
-		Value:   "all",
+		Value:   cli.NewStringSlice("all"),
 		Usage:   "Coma separated list of audits to run. (disable: \"none\")",
 		EnvVars: []string{"KLUSTAIR_KUBEAUDIT"},
 	}
