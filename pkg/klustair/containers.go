@@ -37,6 +37,7 @@ func (c *Container) Init(container v1.Container, containerstatus []v1.ContainerS
 	//c.security_context = json.Unmarshal(container.SecurityContext)
 	c.init_container = init_container
 
+	// TODO: This part needs some refinement (Missing fields and unusual values)
 	for _, status := range containerstatus {
 		if status.Name == c.name {
 			fmt.Printf("STATUS: %+v\n", status.Name)

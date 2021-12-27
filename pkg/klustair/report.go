@@ -8,7 +8,7 @@ type Report struct {
 	uid           string
 	label         string
 	namespaces    *NamespaceList
-	podsList      *PodsList
+	objectsList   *ObjectsList
 	reportSummary *ReportSummary
 
 	//clientset *kubernetes.Clientset
@@ -22,9 +22,9 @@ func (r *Report) Init(label string, whitelist []string, blacklist []string) {
 	ns.Init(whitelist, blacklist)
 	r.namespaces = ns
 
-	p := new(PodsList)
-	p.Init(r.namespaces)
-	r.podsList = p
+	o := new(ObjectsList)
+	o.Init(r.namespaces)
+	r.objectsList = o
 
 	rs := new(ReportSummary)
 	rs.Init()
