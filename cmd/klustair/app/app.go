@@ -74,6 +74,22 @@ var (
 		EnvVars: []string{"KLUSTAIR_CONFIGKEY"},
 	}
 
+	apihostFlag = cli.StringFlag{
+		Name:    "apihost",
+		Aliases: []string{"H"},
+		Value:   "",
+		Usage:   "Remote API-host address [example: https://localhost:8443]",
+		EnvVars: []string{"KLUSTAIR_APIHOST"},
+	}
+
+	apitokenFlag = cli.StringFlag{
+		Name:    "apitoken",
+		Aliases: []string{"T"},
+		Value:   "",
+		Usage:   "API Access Token from Klustair Frontend",
+		EnvVars: []string{"KLUSTAIR_APITOKEN"},
+	}
+
 	debugFlag = cli.BoolFlag{
 		Name:    "debug",
 		Aliases: []string{"d"},
@@ -104,6 +120,8 @@ var (
 		&limitdateFlag,
 		&limitnrFlag,
 		&configkeyFlag,
+		&apihostFlag,
+		&apitokenFlag,
 	}
 )
 

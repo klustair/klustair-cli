@@ -1,12 +1,11 @@
 package klustair
 
 import (
-	"context"
 	"fmt"
 
+	"github.com/klustair/klustair-go/pkg/kubeaudit"
 	"github.com/klustair/klustair-go/pkg/kubectl"
 	"github.com/urfave/cli/v2"
-	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
 type Options struct {
@@ -18,8 +17,12 @@ type Options struct {
 	TrivyCredentialsPath string
 	LimitDate            int
 	LimitNr              int
-	configkey            string
+	Configkey            string
+	Apihost              string
+	Apitoken             string
 }
+
+var Client *kubectl.Client
 
 func RunCli(ctx *cli.Context) error {
 	fmt.Println("run")
@@ -32,14 +35,27 @@ func RunCli(ctx *cli.Context) error {
 func Run(opt Options) error {
 	fmt.Printf("run with options: %+v\n", opt)
 
-	clientset, _ := kubectl.GetClientset(false)
-	fmt.Printf("clientset: %+v\n", clientset)
+	//initialize Kubectl client
+	Client = kubectl.NewKubectlClient(false)
 
-	pods, err := clientset.CoreV1().Pods("klustair").List(context.TODO(), metav1.ListOptions{})
-	if err != nil {
-		panic(err.Error())
+	//initialize Klustair Report
+	Report := NewReport(opt)
+
+	fmt.Printf("Report: %+v\n", Report)
+
+	if opt.Trivy {
+		/*
+			clientset := kubectl.GetClientset(false)
+			namespaces, _ := kubectl.GetNamespaces(clientset)
+			fmt.Printf("namespaces: %+v\n", namespaces)
+		*/
 	}
-	fmt.Printf("There are %d pods in the cluster\n", len(pods.Items))
+
+	opt.KubeAudit = nil
+	if opt.KubeAudit != nil {
+		fmt.Printf("kubeaudit: %+v\n", opt.KubeAudit)
+		kubeaudit.All()
+	}
 
 	return nil
 	//return xerrors.Errorf("option error: %w", "nothing to do")
@@ -55,7 +71,9 @@ func loadOpts(ctx *cli.Context) (Options, error) {
 		TrivyCredentialsPath: ctx.String("repocredentialspath"),
 		LimitDate:            ctx.Int("limitdate"),
 		LimitNr:              ctx.Int("limitnr"),
-		configkey:            ctx.String("configkey"),
+		Configkey:            ctx.String("configkey"),
+		Apihost:              ctx.String("apihost"),
+		Apitoken:             ctx.String("apitoken"),
 	}
 	return opt, nil
 }

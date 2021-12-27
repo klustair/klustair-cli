@@ -1,22 +1,39 @@
 package kubectl
 
 import (
-	"flag"
+	"context"
 	"fmt"
-	"path/filepath"
 
+	v1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes"
+	"k8s.io/client-go/tools/clientcmd"
+
 	// all available auth providers for go-client
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/azure"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/gcp"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/oidc"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/openstack"
 	"k8s.io/client-go/rest"
-	"k8s.io/client-go/tools/clientcmd"
-	"k8s.io/client-go/util/homedir"
 )
 
-func GetClientset(inCluster bool) (*kubernetes.Clientset, error) {
+type Client struct {
+	clientset *kubernetes.Clientset
+	inCluster bool
+}
+
+func (c *Client) Init(inCluster bool) {
+	c.inCluster = inCluster
+	c.clientset = GetClientset(inCluster)
+}
+
+func NewKubectlClient(inCluster bool) *Client {
+	c := new(Client)
+	c.Init(inCluster)
+	return c
+}
+
+func GetClientset(inCluster bool) *kubernetes.Clientset {
 
 	if inCluster {
 
@@ -30,32 +47,33 @@ func GetClientset(inCluster bool) (*kubernetes.Clientset, error) {
 		if err != nil {
 			panic(err.Error())
 		}
+		// TODO remove me
 		fmt.Printf("clientset: %+v\n", clientset)
-		return clientset, nil
+		return clientset
 	} else {
-		var kubeconfig *string
-		if home := homedir.HomeDir(); home != "" {
-			kubeconfig = flag.String("kubeconfig", filepath.Join(home, ".kube", "config.d", "config-cargo-srf-dev"), "(optional) absolute path to the kubeconfig file")
-		} else {
-			kubeconfig = flag.String("kubeconfig", "", "absolute path to the kubeconfig file")
-		}
-		flag.Parse()
+		loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
 
-		// use the current context in kubeconfig
-		config, err := clientcmd.BuildConfigFromFlags("", *kubeconfig)
+		configOverrides := &clientcmd.ConfigOverrides{}
+
+		kubeConfig := clientcmd.NewNonInteractiveDeferredLoadingClientConfig(loadingRules, configOverrides)
+
+		config, err := kubeConfig.ClientConfig()
 		if err != nil {
 			panic(err.Error())
 		}
 
-		// create the clientset
 		clientset, err := kubernetes.NewForConfig(config)
 		if err != nil {
 			panic(err.Error())
 		}
-		return clientset, nil
+		return clientset
 	}
 }
 
-func GetNamespaces() ([]string, error) {
-	return nil, nil
+func (c *Client) GetNamespaces() (*v1.NamespaceList, error) {
+	return c.clientset.CoreV1().Namespaces().List(context.TODO(), metav1.ListOptions{})
+}
+
+func (c *Client) GetPods(namespace string) (*v1.PodList, error) {
+	return c.clientset.CoreV1().Pods(namespace).List(context.TODO(), metav1.ListOptions{})
 }
