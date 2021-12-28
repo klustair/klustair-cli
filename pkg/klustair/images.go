@@ -1,6 +1,8 @@
 package klustair
 
 import (
+	"fmt"
+
 	"github.com/google/uuid"
 )
 
@@ -25,5 +27,12 @@ func (i *Image) Init(fulltag string) {
 
 func (i *Image) Scan() {
 	// TODO scan image with trivy
-	trivyscanner.GetDefaultOptions()
+	trivy := Trivy.NewScanner()
+	report, err := trivy.Scan(i.fulltag)
+
+	if err != nil {
+		fmt.Println("error:", err)
+		return
+	}
+	fmt.Printf("%+v\n", report)
 }

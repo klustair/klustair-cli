@@ -5,6 +5,7 @@ import (
 
 	"github.com/klustair/klustair-go/pkg/kubeaudit"
 	"github.com/klustair/klustair-go/pkg/kubectl"
+	"github.com/klustair/klustair-go/pkg/trivyscanner"
 	"github.com/urfave/cli/v2"
 )
 
@@ -23,6 +24,7 @@ type Options struct {
 }
 
 var Client *kubectl.Client
+var Trivy *trivyscanner.Trivy
 
 func RunCli(ctx *cli.Context) error {
 	fmt.Println("run")

@@ -1,16 +1,30 @@
 package trivyscanner
 
 import (
+	"context"
 	"os"
 	"time"
 
 	dbTypes "github.com/aquasecurity/trivy-db/pkg/types"
 	"github.com/aquasecurity/trivy/pkg/commands/option"
+	"github.com/aquasecurity/trivy/pkg/report"
 	"github.com/klustair/trivy/pkg/commands/artifact"
 )
 
-func GetDefaultOption() (artifact.Option, error) {
-	opt := artifact.Option{
+type Trivy struct {
+	inCluster bool
+	Options   artifact.Option
+}
+
+func (t *Trivy) NewScanner() *Trivy {
+	return &Trivy{
+		inCluster: false,
+		Options:   GetOption(),
+	}
+}
+
+func GetOption() artifact.Option {
+	option := artifact.Option{
 		GlobalOption: option.GlobalOption{
 			Context:    nil,
 			Logger:     nil,
@@ -27,7 +41,8 @@ func GetDefaultOption() (artifact.Option, error) {
 			SkipDirs:  []string{},
 			SkipFiles: []string{},
 
-			Target: "node:latest",
+			Target:      "node:latest",
+			OfflineScan: false,
 		},
 		DBOption: option.DBOption{
 			Reset:          false,
@@ -81,6 +96,15 @@ func GetDefaultOption() (artifact.Option, error) {
 		},
 		DisabledAnalyzers: nil,
 	}
+	return option
+}
 
-	return opt, nil
+func (t *Trivy) Scan(image string) (report.Report, error) {
+	t.Options.ArtifactOption.Target = image
+
+	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	defer cancel()
+
+	return artifact.ImageRunLib(ctx, t.Options)
+
 }
