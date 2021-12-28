@@ -19,10 +19,10 @@ var (
 		EnvVars: []string{"KLUSTAIR_NAMESPACESBLACKLIST"},
 	}
 
-	kubeauditFlag = cli.StringSliceFlag{
+	kubeauditFlag = cli.StringFlag{
 		Name:    "kubeaudit",
 		Aliases: []string{"k"},
-		Value:   cli.NewStringSlice("all"),
+		Value:   "all",
 		Usage:   "Coma separated list of audits to run. (disable: \"none\")",
 		EnvVars: []string{"KLUSTAIR_KUBEAUDIT"},
 	}

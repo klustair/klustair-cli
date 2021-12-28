@@ -3,7 +3,6 @@ package klustair
 import (
 	"fmt"
 
-	"github.com/klustair/klustair-go/pkg/kubeaudit"
 	"github.com/klustair/klustair-go/pkg/kubectl"
 	"github.com/klustair/klustair-go/pkg/trivyscanner"
 	"github.com/urfave/cli/v2"
@@ -12,7 +11,7 @@ import (
 type Options struct {
 	Namespaces           []string
 	NamespacesBlacklist  []string
-	KubeAudit            []string
+	KubeAudit            string
 	Trivy                bool
 	Label                string
 	TrivyCredentialsPath string
@@ -47,14 +46,16 @@ func Run(opt Options) error {
 		fmt.Printf("trivyreport: %+v\n", trivyreport.ArtifactName)
 	}
 
+	fmt.Printf("kubeauditReport: %+v\n", Report.kubeauditReport)
+
 	fmt.Printf("Report: %+v\n", Report)
-
-	opt.KubeAudit = nil
-	if opt.KubeAudit != nil {
-		fmt.Printf("kubeaudit: %+v\n", opt.KubeAudit)
-		kubeaudit.All()
-	}
-
+	/*
+		opt.KubeAudit = nil
+		if opt.KubeAudit != nil {
+			fmt.Printf("kubeaudit: %+v\n", opt.KubeAudit)
+			kubeaudit.All()
+		}
+	*/
 	return nil
 	//return xerrors.Errorf("option error: %w", "nothing to do")
 }
@@ -63,7 +64,7 @@ func loadOpts(ctx *cli.Context) (Options, error) {
 	opt := Options{
 		Namespaces:           ctx.StringSlice("namespaces"),
 		NamespacesBlacklist:  ctx.StringSlice("namespacesblacklist"),
-		KubeAudit:            ctx.StringSlice("kubeaudit"),
+		KubeAudit:            ctx.String("kubeaudit"),
 		Trivy:                ctx.Bool("trivy"),
 		Label:                ctx.String("label"),
 		TrivyCredentialsPath: ctx.String("repocredentialspath"),
