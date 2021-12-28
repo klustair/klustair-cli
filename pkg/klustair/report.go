@@ -10,8 +10,6 @@ type Report struct {
 	namespaces    *NamespaceList
 	objectsList   *ObjectsList
 	reportSummary *ReportSummary
-
-	//clientset *kubernetes.Clientset
 }
 
 func (r *Report) Init(label string, whitelist []string, blacklist []string, trivy bool) {

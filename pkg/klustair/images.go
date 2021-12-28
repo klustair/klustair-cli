@@ -26,7 +26,6 @@ func (i *Image) Init(fulltag string) {
 }
 
 func (i *Image) Scan() {
-	// TODO scan image with trivy
 	trivy := Trivy.NewScanner()
 	report, err := trivy.Scan(i.fulltag)
 
