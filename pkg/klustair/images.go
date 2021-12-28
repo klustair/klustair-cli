@@ -1,6 +1,8 @@
 package klustair
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
 type Image struct {
 	uid            string
@@ -19,4 +21,9 @@ type Image struct {
 func (i *Image) Init(fulltag string) {
 	i.uid = uuid.New().String()
 	i.fulltag = fulltag
+}
+
+func (i *Image) Scan() {
+	// TODO scan image with trivy
+	trivyscanner.GetDefaultOptions()
 }

@@ -75,3 +75,11 @@ func (ol *ObjectsList) Init(namespaces *NamespaceList) {
 		}
 	}
 }
+
+func (ol *ObjectsList) ScanImages() {
+	for _, image := range ol.images {
+		fmt.Println("fulltag:", image.fulltag)
+		image.Scan()
+	}
+
+}
