@@ -1,8 +1,7 @@
 package klustair
 
 import (
-	"fmt"
-
+	"github.com/aquasecurity/trivy/pkg/report"
 	"github.com/google/uuid"
 )
 
@@ -25,13 +24,7 @@ func (i *Image) Init(fulltag string) {
 	i.fulltag = fulltag
 }
 
-func (i *Image) Scan() {
+func (i *Image) Scan() (report.Report, error) {
 	trivy := Trivy.NewScanner()
-	report, err := trivy.Scan(i.fulltag)
-
-	if err != nil {
-		fmt.Println("error:", err)
-		return
-	}
-	fmt.Printf("%+v\n", report)
+	return trivy.Scan(i.fulltag)
 }

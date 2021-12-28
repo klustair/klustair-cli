@@ -30,7 +30,7 @@ func GetOption() artifact.Option {
 			Logger:     nil,
 			AppVersion: "1",
 			Quiet:      false,
-			Debug:      true,
+			Debug:      false,
 			CacheDir:   "/tmp/trivy",
 		},
 		ArtifactOption: option.ArtifactOption{

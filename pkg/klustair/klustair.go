@@ -45,14 +45,6 @@ func Run(opt Options) error {
 
 	fmt.Printf("Report: %+v\n", Report)
 
-	if opt.Trivy {
-		/*
-			clientset := kubectl.GetClientset(false)
-			namespaces, _ := kubectl.GetNamespaces(clientset)
-			fmt.Printf("namespaces: %+v\n", namespaces)
-		*/
-	}
-
 	opt.KubeAudit = nil
 	if opt.KubeAudit != nil {
 		fmt.Printf("kubeaudit: %+v\n", opt.KubeAudit)

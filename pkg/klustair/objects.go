@@ -2,12 +2,15 @@ package klustair
 
 import (
 	"fmt"
+
+	"github.com/aquasecurity/trivy/pkg/report"
 )
 
 type ObjectsList struct {
-	pods       []*Pod
-	containers []*Container
-	images     []*Image
+	pods         []*Pod
+	containers   []*Container
+	images       []*Image
+	trivyreports []*report.Report
 }
 
 func (ol *ObjectsList) Init(namespaces *NamespaceList) {
@@ -55,10 +58,26 @@ func (ol *ObjectsList) Init(namespaces *NamespaceList) {
 	}
 }
 
-func (ol *ObjectsList) ScanImages() {
+func (ol *ObjectsList) GetUniqueImages() map[string]*Image {
+	//var unique map[]images
+	uniqueImages := make(map[string]*Image)
+
 	for _, image := range ol.images {
+		uniqueImages[image.fulltag] = image
+	}
+	return uniqueImages
+}
+
+func (ol *ObjectsList) ScanImages() {
+	//var unique map[]images
+	uniqueImages := ol.GetUniqueImages()
+	for _, image := range uniqueImages {
 		fmt.Println("fulltag:", image.fulltag)
-		image.Scan()
+		report, err := image.Scan()
+		if err != nil {
+			fmt.Errorf("error scanning image: %s", err)
+		}
+		ol.trivyreports = append(ol.trivyreports, &report)
 	}
 
 }
