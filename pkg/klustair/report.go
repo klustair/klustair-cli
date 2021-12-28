@@ -17,7 +17,7 @@ type Report struct {
 	reportSummary   *ReportSummary
 }
 
-func (r *Report) Init(label string, whitelist []string, blacklist []string, trivy bool, kubeauditAuditors string) {
+func (r *Report) Init(label string, whitelist []string, blacklist []string, trivy bool, kubeauditAuditors []string) {
 	r.uid = uuid.New().String()
 	r.label = label
 
@@ -30,8 +30,8 @@ func (r *Report) Init(label string, whitelist []string, blacklist []string, triv
 	r.objectsList = o
 
 	//kubeauditAuditors = nil
-	if kubeauditAuditors != "" {
-		fmt.Printf("kubeaudit: %+v\n", kubeauditAuditors)
+	if len(kubeauditAuditors) > 0 && kubeauditAuditors[0] != "" {
+		fmt.Printf("kubeaudit: %+v\n", len(kubeauditAuditors))
 		k := new(kubeaudit.Auditor)
 		k.SetConfig(kubeauditAuditors)
 		r.kubeauditReport = k.Run()

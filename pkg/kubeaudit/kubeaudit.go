@@ -2,7 +2,6 @@ package kubeaudit
 
 import (
 	"fmt"
-	"strings"
 
 	"github.com/Shopify/kubeaudit"
 	"github.com/Shopify/kubeaudit/auditors/all"
@@ -18,10 +17,10 @@ type Auditor struct {
 	Report          *kubeaudit.Report
 }
 
-func (a *Auditor) SetConfig(auditors string) kubeauditconfig.KubeauditConfig {
+func (a *Auditor) SetConfig(auditors []string) kubeauditconfig.KubeauditConfig {
 	auditoorsmap := make(map[string]bool)
 	fmt.Printf("auditors: %+v\n", auditors)
-	for _, a := range strings.Split(auditors, ",") {
+	for _, a := range auditors {
 		fmt.Printf("auditor: %+v\n", a)
 		auditoorsmap[a] = true
 	}

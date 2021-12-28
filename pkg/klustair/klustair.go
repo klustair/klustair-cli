@@ -2,6 +2,7 @@ package klustair
 
 import (
 	"fmt"
+	"strings"
 
 	"github.com/klustair/klustair-go/pkg/kubectl"
 	"github.com/klustair/klustair-go/pkg/trivyscanner"
@@ -11,7 +12,7 @@ import (
 type Options struct {
 	Namespaces           []string
 	NamespacesBlacklist  []string
-	KubeAudit            string
+	KubeAudit            []string
 	Trivy                bool
 	Label                string
 	TrivyCredentialsPath string
@@ -62,9 +63,9 @@ func Run(opt Options) error {
 
 func loadOpts(ctx *cli.Context) (Options, error) {
 	opt := Options{
-		Namespaces:           ctx.StringSlice("namespaces"),
-		NamespacesBlacklist:  ctx.StringSlice("namespacesblacklist"),
-		KubeAudit:            ctx.String("kubeaudit"),
+		Namespaces:           strings.Split(ctx.String("namespaces"), ","),
+		NamespacesBlacklist:  strings.Split(ctx.String("namespacesblacklist"), ","),
+		KubeAudit:            strings.Split(ctx.String("kubeaudit"), ","),
 		Trivy:                ctx.Bool("trivy"),
 		Label:                ctx.String("label"),
 		TrivyCredentialsPath: ctx.String("repocredentialspath"),
