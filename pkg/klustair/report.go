@@ -4,6 +4,7 @@ import (
 	"fmt"
 
 	ka "github.com/Shopify/kubeaudit"
+	"github.com/aquasecurity/trivy/pkg/report"
 	"github.com/google/uuid"
 	"github.com/klustair/klustair-go/pkg/kubeaudit"
 )
@@ -14,6 +15,7 @@ type Report struct {
 	namespaces      *NamespaceList
 	objectsList     *ObjectsList
 	kubeauditReport *ka.Report
+	trivyreports    []*report.Report
 	reportSummary   *ReportSummary
 }
 
@@ -38,7 +40,8 @@ func (r *Report) Init(label string, whitelist []string, blacklist []string, triv
 	}
 
 	if trivy {
-		o.ScanImages()
+		uniqueImages := r.objectsList.GetUniqueImages()
+		r.trivyreports, _ = Trivy.NewScanner().ScanImages(uniqueImages)
 	}
 
 	rs := new(ReportSummary)

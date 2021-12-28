@@ -3,7 +3,10 @@ package klustair
 import (
 	"github.com/aquasecurity/trivy/pkg/report"
 	"github.com/google/uuid"
+	"github.com/klustair/klustair-go/pkg/trivyscanner"
 )
+
+var Trivy *trivyscanner.Trivy
 
 type Image struct {
 	uid            string

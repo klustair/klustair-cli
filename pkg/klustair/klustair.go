@@ -5,7 +5,6 @@ import (
 	"strings"
 
 	"github.com/klustair/klustair-go/pkg/kubectl"
-	"github.com/klustair/klustair-go/pkg/trivyscanner"
 	"github.com/urfave/cli/v2"
 )
 
@@ -24,7 +23,6 @@ type Options struct {
 }
 
 var Client *kubectl.Client
-var Trivy *trivyscanner.Trivy
 
 func RunCli(ctx *cli.Context) error {
 	fmt.Println("run")
@@ -50,13 +48,6 @@ func Run(opt Options) error {
 	fmt.Printf("kubeauditReport: %+v\n", Report.kubeauditReport)
 
 	fmt.Printf("Report: %+v\n", Report)
-	/*
-		opt.KubeAudit = nil
-		if opt.KubeAudit != nil {
-			fmt.Printf("kubeaudit: %+v\n", opt.KubeAudit)
-			kubeaudit.All()
-		}
-	*/
 	return nil
 	//return xerrors.Errorf("option error: %w", "nothing to do")
 }

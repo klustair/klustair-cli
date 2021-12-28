@@ -58,16 +58,17 @@ func (ol *ObjectsList) Init(namespaces *NamespaceList) {
 	}
 }
 
-func (ol *ObjectsList) GetUniqueImages() map[string]*Image {
+func (ol *ObjectsList) GetUniqueImages() map[string]*string {
 	//var unique map[]images
-	uniqueImages := make(map[string]*Image)
+	uniqueImages := make(map[string]*string)
 
 	for _, image := range ol.images {
-		uniqueImages[image.fulltag] = image
+		uniqueImages[image.fulltag] = &image.fulltag
 	}
 	return uniqueImages
 }
 
+/*
 func (ol *ObjectsList) ScanImages() {
 	//var unique map[]images
 	uniqueImages := ol.GetUniqueImages()
@@ -75,9 +76,10 @@ func (ol *ObjectsList) ScanImages() {
 		fmt.Println("fulltag:", image.fulltag)
 		report, err := image.Scan()
 		if err != nil {
-			fmt.Errorf("error scanning image: %s", err)
+			fmt.Printf("error scanning image: %s", err)
 		}
 		ol.trivyreports = append(ol.trivyreports, &report)
 	}
 
 }
+*/

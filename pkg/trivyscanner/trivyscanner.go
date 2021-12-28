@@ -2,6 +2,7 @@ package trivyscanner
 
 import (
 	"context"
+	"fmt"
 	"time"
 
 	dbTypes "github.com/aquasecurity/trivy-db/pkg/types"
@@ -105,9 +106,21 @@ func (t *Trivy) Scan(image string) (report.Report, error) {
 	ctx, cancel := context.WithTimeout(context.Background(), 150*time.Second)
 	defer cancel()
 
-	// Skip scan
-	//return report.Report{}, nil
-
 	return artifact.ImageRunLib(ctx, t.Options)
 
+}
+
+func (t *Trivy) ScanImages(uniqueImages map[string]*string) ([]*report.Report, error) {
+	var reports []*report.Report
+	for fulltag, _ := range uniqueImages {
+		fmt.Println("fulltag:", fulltag)
+		//continue // Skip scan
+		report, err := t.Scan(fulltag)
+		if err != nil {
+			fmt.Printf("error scanning fulltag: %s", err)
+			continue
+		}
+		reports = append(reports, &report)
+	}
+	return reports, nil
 }
