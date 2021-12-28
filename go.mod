@@ -4,7 +4,10 @@ go 1.17
 
 require (
 	github.com/Shopify/kubeaudit v0.14.3-0.20211125152147-d3ec331b7df9
+	github.com/aquasecurity/trivy v0.22.0
+	github.com/aquasecurity/trivy-db v0.0.0-20211222120943-2b609a291dbb
 	github.com/google/uuid v1.3.0
+	github.com/klustair/trivy v0.22.1-0.20211228084627-1aed6e6950a5
 	github.com/urfave/cli/v2 v2.3.0
 	k8s.io/api v0.23.1
 	k8s.io/apimachinery v0.23.1
@@ -42,8 +45,6 @@ require (
 	github.com/aquasecurity/go-pep440-version v0.0.0-20210121094942-22b2f8951d46 // indirect
 	github.com/aquasecurity/go-version v0.0.0-20210121072130-637058cfe492 // indirect
 	github.com/aquasecurity/tfsec v0.63.1 // indirect
-	github.com/aquasecurity/trivy v0.22.0 // indirect
-	github.com/aquasecurity/trivy-db v0.0.0-20211222120943-2b609a291dbb // indirect
 	github.com/aws/aws-sdk-go v1.42.0 // indirect
 	github.com/bgentry/go-netrc v0.0.0-20140422174119-9fd32a8b3d3d // indirect
 	github.com/bmatcuk/doublestar v1.3.4 // indirect
@@ -102,10 +103,8 @@ require (
 	github.com/jetstack/cert-manager v1.6.1 // indirect
 	github.com/jmespath/go-jmespath v0.4.0 // indirect
 	github.com/json-iterator/go v1.1.12 // indirect
-	github.com/jstemmer/go-junit-report v0.9.1 // indirect
 	github.com/kevinburke/ssh_config v0.0.0-20201106050909-4977a11b4351 // indirect
 	github.com/klauspost/compress v1.13.6 // indirect
-	github.com/klustair/trivy v0.22.1-0.20211228084627-1aed6e6950a5 // indirect
 	github.com/knqyf263/go-apk-version v0.0.0-20200609155635-041fdbb8563f // indirect
 	github.com/knqyf263/go-deb-version v0.0.0-20190517075300-09fca494f03d // indirect
 	github.com/knqyf263/go-rpm-version v0.0.0-20170716094938-74609b86c936 // indirect
@@ -157,7 +156,6 @@ require (
 	go.uber.org/multierr v1.6.0 // indirect
 	go.uber.org/zap v1.19.1 // indirect
 	golang.org/x/crypto v0.0.0-20210921155107-089bfa567519 // indirect
-	golang.org/x/lint v0.0.0-20210508222113-6edffad5e616 // indirect
 	golang.org/x/mod v0.6.0-dev.0.20211013180041-c96bc1413d57 // indirect
 	golang.org/x/net v0.0.0-20211209124913-491a49abca63 // indirect
 	golang.org/x/oauth2 v0.0.0-20211005180243-6b3c2da341f1 // indirect
@@ -166,7 +164,6 @@ require (
 	golang.org/x/term v0.0.0-20210615171337-6886f2dfbf5b // indirect
 	golang.org/x/text v0.3.7 // indirect
 	golang.org/x/time v0.0.0-20210723032227-1f47c861a9ac // indirect
-	golang.org/x/tools v0.1.8 // indirect
 	golang.org/x/xerrors v0.0.0-20200804184101-5ec99f83aff1 // indirect
 	google.golang.org/api v0.60.0 // indirect
 	google.golang.org/appengine v1.6.7 // indirect
