@@ -2,7 +2,6 @@ package trivyscanner
 
 import (
 	"context"
-	"os"
 	"time"
 
 	dbTypes "github.com/aquasecurity/trivy-db/pkg/types"
@@ -29,7 +28,7 @@ func GetOption() artifact.Option {
 			Context:    nil,
 			Logger:     nil,
 			AppVersion: "1",
-			Quiet:      false,
+			Quiet:      true,
 			Debug:      false,
 			CacheDir:   "/tmp/trivy",
 		},
@@ -72,7 +71,7 @@ func GetOption() artifact.Option {
 				"vuln",
 				//"config",
 			},
-			Output: os.Stdout, //nil, //os.Stdout, //file
+			Output: nil, //nil, //os.Stdout, //file
 			Severities: []dbTypes.Severity{
 				0,
 				1,
@@ -102,8 +101,12 @@ func GetOption() artifact.Option {
 func (t *Trivy) Scan(image string) (report.Report, error) {
 	t.Options.ArtifactOption.Target = image
 
-	ctx, cancel := context.WithTimeout(context.Background(), 15*time.Second)
+	// TODO: make timeout configurable
+	ctx, cancel := context.WithTimeout(context.Background(), 150*time.Second)
 	defer cancel()
+
+	// Skip scan
+	//return report.Report{}, nil
 
 	return artifact.ImageRunLib(ctx, t.Options)
 
