@@ -43,6 +43,10 @@ func Run(opt Options) error {
 	//initialize Klustair Report
 	Report := NewReport(opt)
 
+	for _, trivyreport := range Report.objectsList.trivyreports {
+		fmt.Printf("trivyreport: %+v\n", trivyreport.ArtifactName)
+	}
+
 	fmt.Printf("Report: %+v\n", Report)
 
 	opt.KubeAudit = nil
