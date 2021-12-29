@@ -8,23 +8,23 @@ import (
 )
 
 type Namespace struct {
-	name                     string
-	uid                      string
-	kubernetes_namespace_uid types.UID
-	creation_timestamp       int64
+	Name                     string    `json:"name"`
+	Uid                      string    `json:"uid"`
+	Kubernetes_namespace_uid types.UID `json:"kubernetes_namespace_uid"`
+	Creation_timestamp       int64     `json:"creation_timestamp"`
 }
 
 type NamespaceList struct {
-	namespaces []Namespace
-	total      int
-	checked    int
+	Namespaces []Namespace `json:"namespaces"`
+	Total      int         `json:"total"`
+	Checked    int         `json:"checked"`
 }
 
 func (n *Namespace) Init(name string, kubernetes_namespace_uid types.UID, creation_timestamp int64) {
-	n.name = name
-	n.uid = uuid.New().String()
-	n.kubernetes_namespace_uid = kubernetes_namespace_uid
-	n.creation_timestamp = creation_timestamp
+	n.Name = name
+	n.Uid = uuid.New().String()
+	n.Kubernetes_namespace_uid = kubernetes_namespace_uid
+	n.Creation_timestamp = creation_timestamp
 }
 
 func (ns *NamespaceList) Init(whitelist []string, blacklist []string) {
@@ -34,7 +34,7 @@ func (ns *NamespaceList) Init(whitelist []string, blacklist []string) {
 		panic(err)
 	}
 
-	ns.total = len(namespaceList.Items)
+	ns.Total = len(namespaceList.Items)
 	for _, namespace := range namespaceList.Items {
 
 		if len(whitelist) > 0 {
@@ -54,16 +54,17 @@ func (ns *NamespaceList) Init(whitelist []string, blacklist []string) {
 
 		// TODO remove me
 		fmt.Printf("namespace: %+v\n", n)
-		ns.namespaces = append(ns.namespaces, *n)
+		ns.Namespaces = append(ns.Namespaces, *n)
 	}
+	ns.Checked = len(ns.Namespaces)
 
 }
 
 func (ns *NamespaceList) GetNamespaces() []string {
 	var namespacesList []string
-	for _, namespace := range ns.namespaces {
-		fmt.Println("namespace:", namespace.name)
-		namespacesList = append(namespacesList, namespace.name)
+	for _, namespace := range ns.Namespaces {
+		fmt.Println("namespace:", namespace.Name)
+		namespacesList = append(namespacesList, namespace.Name)
 	}
 	return namespacesList
 }

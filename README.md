@@ -13,8 +13,7 @@ The Klustair client searches your Kubernetes namespaces for the used images and 
 
 ## Usage
 ```
-usage: klustair [-h] [-v] [-n NAMESPACES] [-N NAMESPACESBLACKLIST]
-                 [-k KUBEAUDIT] [-l LABEL] [-a] [-t] [-c TRIVYCREDENTIALS]
+klustair [global options]
 
 optional arguments:
    --verbose, -V                          increase output verbosity (default: false) [$KLUSTAIR_VERBOSE]

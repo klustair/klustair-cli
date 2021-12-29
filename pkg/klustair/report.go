@@ -1,17 +1,19 @@
 package klustair
 
 import (
+	"encoding/json"
 	"fmt"
 
 	ka "github.com/Shopify/kubeaudit"
 	"github.com/aquasecurity/trivy/pkg/report"
 	"github.com/google/uuid"
+	"github.com/klustair/klustair-go/pkg/api"
 	"github.com/klustair/klustair-go/pkg/kubeaudit"
 )
 
 type Report struct {
-	uid              string
-	label            string
+	Uid              string `json:"uid"`
+	Label            string `json:"label"`
 	namespaces       *NamespaceList
 	objectsList      *ObjectsList
 	kubeauditReports []*ka.Report
@@ -20,8 +22,8 @@ type Report struct {
 }
 
 func (r *Report) Init(label string, whitelist []string, blacklist []string, trivy bool, kubeauditAuditors []string) {
-	r.uid = uuid.New().String()
-	r.label = label
+	r.Uid = uuid.New().String()
+	r.Label = label
 
 	ns := new(NamespaceList)
 	ns.Init(whitelist, blacklist)
@@ -47,7 +49,7 @@ func (r *Report) Init(label string, whitelist []string, blacklist []string, triv
 
 	rs := new(ReportSummary)
 	rs.Init()
-	rs.namespaces_total = ns.total
+	rs.namespaces_total = ns.Total
 	r.reportSummary = rs
 }
 
@@ -55,4 +57,23 @@ func NewReport(opt Options) *Report {
 	r := new(Report)
 	r.Init(opt.Label, opt.Namespaces, opt.NamespacesBlacklist, opt.Trivy, opt.KubeAudit)
 	return r
+}
+
+func (r *Report) SendReport(opt Options) error {
+	fmt.Println("SEND REPORT ------------------")
+	apiClient := api.NewApiClient(opt.Apihost, opt.Apitoken)
+
+	fmt.Printf("namespaces: %+v\n", r.namespaces)
+	reportJSON, jsonErr := json.Marshal(r.namespaces)
+	if jsonErr != nil {
+		fmt.Printf("json error: %+v\n", jsonErr)
+	}
+
+	err := apiClient.SendReport(reportJSON)
+	if err != nil {
+		return err
+	}
+
+	return nil
+
 }

@@ -41,13 +41,16 @@ func Run(opt Options) error {
 	//initialize Klustair Report
 	Report := NewReport(opt)
 
+	// TODO debug remove me
 	for _, trivyreport := range Report.objectsList.trivyreports {
 		fmt.Printf("trivyreport: %+v\n", trivyreport.ArtifactName)
 	}
 
+	// TODO debug remove me
 	fmt.Printf("kubeauditReport: %+v\n", Report.kubeauditReports)
-
 	fmt.Printf("Report: %+v\n", Report)
+
+	Report.SendReport(opt)
 	return nil
 	//return xerrors.Errorf("option error: %w", "nothing to do")
 }

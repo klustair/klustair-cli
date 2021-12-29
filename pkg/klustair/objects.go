@@ -15,9 +15,9 @@ type ObjectsList struct {
 
 func (ol *ObjectsList) Init(namespaces *NamespaceList) {
 
-	for _, namespace := range namespaces.namespaces {
+	for _, namespace := range namespaces.Namespaces {
 
-		podsList, err := Client.GetPods(namespace.name)
+		podsList, err := Client.GetPods(namespace.Name)
 		if err != nil {
 			panic(err)
 		}
@@ -25,7 +25,7 @@ func (ol *ObjectsList) Init(namespaces *NamespaceList) {
 		for _, pod := range podsList.Items {
 
 			p := new(Pod)
-			p.Init(namespace.uid, pod)
+			p.Init(namespace.Uid, pod)
 
 			// TODO remove me
 			//fmt.Printf("pod: %+v\n", p)
