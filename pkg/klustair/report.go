@@ -10,13 +10,13 @@ import (
 )
 
 type Report struct {
-	uid             string
-	label           string
-	namespaces      *NamespaceList
-	objectsList     *ObjectsList
-	kubeauditReport *ka.Report
-	trivyreports    []*report.Report
-	reportSummary   *ReportSummary
+	uid              string
+	label            string
+	namespaces       *NamespaceList
+	objectsList      *ObjectsList
+	kubeauditReports []*ka.Report
+	trivyreports     []*report.Report
+	reportSummary    *ReportSummary
 }
 
 func (r *Report) Init(label string, whitelist []string, blacklist []string, trivy bool, kubeauditAuditors []string) {
@@ -35,8 +35,9 @@ func (r *Report) Init(label string, whitelist []string, blacklist []string, triv
 	if len(kubeauditAuditors) > 0 && kubeauditAuditors[0] != "" {
 		fmt.Printf("kubeaudit: %+v\n", len(kubeauditAuditors))
 		k := new(kubeaudit.Auditor)
+		nsList := r.namespaces.GetNamespaces()
 		k.SetConfig(kubeauditAuditors)
-		r.kubeauditReport = k.Run()
+		r.kubeauditReports = k.Run(nsList)
 	}
 
 	if trivy {

@@ -29,7 +29,17 @@ func (a *Auditor) SetConfig(auditors []string) kubeauditconfig.KubeauditConfig {
 	return a.KubeauditConfig
 }
 
-func (a *Auditor) Run() *kubeaudit.Report {
+func (a *Auditor) Run(namespaces []string) []*kubeaudit.Report {
+	var reports []*kubeaudit.Report
+	for _, namespace := range namespaces {
+		fmt.Printf("namespace: %+v\n", namespace)
+		report := a.Audit(namespace)
+		reports = append(reports, report)
+	}
+	return reports
+}
+
+func (a *Auditor) Audit(namespace string) *kubeaudit.Report {
 	auditors, err := all.Auditors(kubeauditconfig.KubeauditConfig{})
 	if err != nil {
 		panic(err)
@@ -42,7 +52,7 @@ func (a *Auditor) Run() *kubeaudit.Report {
 
 	// TODO Need some love here.
 	if true {
-		report, err := kubeAuditor.AuditLocal("", kubeaudit.AuditOptions{})
+		report, err := kubeAuditor.AuditLocal("", kubeaudit.AuditOptions{Namespace: namespace})
 
 		if err != nil {
 			panic(err)
@@ -52,7 +62,7 @@ func (a *Auditor) Run() *kubeaudit.Report {
 
 		return report
 	} else {
-		report, err := kubeAuditor.AuditCluster(kubeaudit.AuditOptions{})
+		report, err := kubeAuditor.AuditCluster(kubeaudit.AuditOptions{Namespace: namespace})
 
 		if err != nil {
 			panic(err)

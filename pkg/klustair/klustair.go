@@ -45,7 +45,7 @@ func Run(opt Options) error {
 		fmt.Printf("trivyreport: %+v\n", trivyreport.ArtifactName)
 	}
 
-	fmt.Printf("kubeauditReport: %+v\n", Report.kubeauditReport)
+	fmt.Printf("kubeauditReport: %+v\n", Report.kubeauditReports)
 
 	fmt.Printf("Report: %+v\n", Report)
 	return nil

@@ -59,6 +59,15 @@ func (ns *NamespaceList) Init(whitelist []string, blacklist []string) {
 
 }
 
+func (ns *NamespaceList) GetNamespaces() []string {
+	var namespacesList []string
+	for _, namespace := range ns.namespaces {
+		fmt.Println("namespace:", namespace.name)
+		namespacesList = append(namespacesList, namespace.name)
+	}
+	return namespacesList
+}
+
 func stringInSlice(a string, list []string) bool {
 	for _, b := range list {
 		if b == a {
