@@ -112,7 +112,7 @@ func (t *Trivy) Scan(image string) (report.Report, error) {
 
 func (t *Trivy) ScanImages(uniqueImages map[string]*string) ([]*report.Report, error) {
 	var reports []*report.Report
-	for fulltag, _ := range uniqueImages {
+	for fulltag := range uniqueImages {
 		fmt.Println("fulltag:", fulltag)
 		//continue // Skip scan
 		report, err := t.Scan(fulltag)
