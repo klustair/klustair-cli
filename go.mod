@@ -8,6 +8,7 @@ require (
 	github.com/aquasecurity/trivy-db v0.0.0-20211222120943-2b609a291dbb
 	github.com/google/uuid v1.3.0
 	github.com/klustair/trivy v0.22.1-0.20211228084627-1aed6e6950a5
+	github.com/miladibra10/vjson v0.2.1
 	github.com/urfave/cli/v2 v2.3.0
 	k8s.io/api v0.23.1
 	k8s.io/apimachinery v0.23.1
@@ -141,6 +142,9 @@ require (
 	github.com/spf13/pflag v1.0.5 // indirect
 	github.com/stretchr/objx v0.3.0 // indirect
 	github.com/stretchr/testify v1.7.0 // indirect
+	github.com/tidwall/gjson v1.7.5 // indirect
+	github.com/tidwall/match v1.0.3 // indirect
+	github.com/tidwall/pretty v1.1.0 // indirect
 	github.com/tmccombs/hcl2json v0.3.1 // indirect
 	github.com/twitchtv/twirp v8.1.0+incompatible // indirect
 	github.com/ulikunitz/xz v0.5.8 // indirect

@@ -13,7 +13,7 @@ import (
 
 type Report struct {
 	Uid              string `json:"uid"`
-	Label            string `json:"label"`
+	Label            string `json:"title"`
 	namespaces       *NamespaceList
 	objectsList      *ObjectsList
 	kubeauditReports []*ka.Report
@@ -63,8 +63,7 @@ func (r *Report) SendReport(opt Options) error {
 	fmt.Println("SEND REPORT ------------------")
 	apiClient := api.NewApiClient(opt.Apihost, opt.Apitoken)
 
-	fmt.Printf("namespaces: %+v\n", r.namespaces)
-	reportJSON, jsonErr := json.Marshal(r.namespaces)
+	reportJSON, jsonErr := json.Marshal(r)
 	if jsonErr != nil {
 		fmt.Printf("json error: %+v\n", jsonErr)
 	}

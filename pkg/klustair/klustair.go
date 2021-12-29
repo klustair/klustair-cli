@@ -50,7 +50,9 @@ func Run(opt Options) error {
 	fmt.Printf("kubeauditReport: %+v\n", Report.kubeauditReports)
 	fmt.Printf("Report: %+v\n", Report)
 
-	Report.SendReport(opt)
+	if opt.Apihost != "" && opt.Apitoken != "" {
+		Report.SendReport(opt)
+	}
 	return nil
 	//return xerrors.Errorf("option error: %w", "nothing to do")
 }

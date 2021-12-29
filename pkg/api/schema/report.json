@@ -1,0 +1,14 @@
+{
+    "fields": [
+        {
+            "name": "uid",
+            "type": "string",
+            "required": true
+        },
+        {
+            "name": "title",
+            "type": "string",
+            "required": true
+        }
+    ]
+}

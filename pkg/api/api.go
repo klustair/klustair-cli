@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"net/http"
 	"strings"
+
+	"github.com/miladibra10/vjson"
 )
 
 type ApiClient struct {
@@ -33,7 +35,27 @@ func (c *ApiClient) sendRequest(method string, path string, json string) error {
 	return nil
 }
 
+func (c *ApiClient) validate(json []byte, schemapath string) error {
+
+	schema, err := vjson.ReadFromFile("./pkg/api/schema/" + schemapath + ".json")
+	if err != nil {
+		fmt.Println("Error reading schema: ", err)
+		return err
+	}
+
+	err = schema.ValidateBytes(json)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 func (c *ApiClient) SendReport(report []byte) error {
-	err := c.sendRequest("POST", "/api/v1/reports", string(report))
+
+	err := c.validate(report, "report")
+	if err != nil {
+		return err
+	}
+	err = c.sendRequest("POST", "/api/v1/pac/report/create", string(report))
 	return err
 }
