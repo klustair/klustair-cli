@@ -1,7 +1,7 @@
 <p align="center"><img src="https://raw.githubusercontent.com/mms-gianni/klustair-frontend/master/docs/img/klustair.png" width="200"></p>
 
 # <a href='https://github.com/mms-gianni/klustair'>KlustAIR Client</a>
-The Klustair client searches your Kubernetes namespaces for the used images and scans them with Trivy. This is the scanner part. 
+The Klustair client searches your Kubernetes namespaces for the used images and scans them with Trivy.
 
 ### Related Klustair projects: 
 - <a href="https://github.com/mms-gianni/klustair-frontend">Klustair Frontend</a> to view the scanner results
@@ -53,7 +53,7 @@ go run cmd/klustair/main.go
 
 ## build
 ```
-go run build -o bin/klustair
+go build -o bin/klustair cmd/klustair/main.go
 ```
 
 ## FAQ
