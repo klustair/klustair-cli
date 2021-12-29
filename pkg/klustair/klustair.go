@@ -51,7 +51,7 @@ func Run(opt Options) error {
 	fmt.Printf("Report: %+v\n", Report)
 
 	if opt.Apihost != "" && opt.Apitoken != "" {
-		Report.SendReport(opt)
+		Report.Send(opt)
 	}
 	return nil
 	//return xerrors.Errorf("option error: %w", "nothing to do")

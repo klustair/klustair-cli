@@ -20,8 +20,13 @@ func NewApiClient(apiHost string, apiToken string) *ApiClient {
 	}
 }
 
-func (c *ApiClient) sendRequest(method string, path string, json string) error {
+func (c *ApiClient) Submit(method string, path string, json string, schema string) error {
 
+	err := c.validate(json, schema)
+	if err != nil {
+		fmt.Println("Error validating json: ", err, schema)
+		return err
+	}
 	fmt.Printf("sendRequest: %+v\n", json)
 	return nil
 
@@ -35,27 +40,17 @@ func (c *ApiClient) sendRequest(method string, path string, json string) error {
 	return nil
 }
 
-func (c *ApiClient) validate(json []byte, schemapath string) error {
+func (c *ApiClient) validate(json string, schema string) error {
 
-	schema, err := vjson.ReadFromFile("./pkg/api/schema/" + schemapath + ".json")
+	sma, err := vjson.ReadFromFile("./pkg/api/schema/" + schema + ".json")
 	if err != nil {
 		fmt.Println("Error reading schema: ", err)
 		return err
 	}
 
-	err = schema.ValidateBytes(json)
+	err = sma.ValidateString(json)
 	if err != nil {
 		return err
 	}
 	return nil
-}
-
-func (c *ApiClient) SendReport(report []byte) error {
-
-	err := c.validate(report, "report")
-	if err != nil {
-		return err
-	}
-	err = c.sendRequest("POST", "/api/v1/pac/report/create", string(report))
-	return err
 }
