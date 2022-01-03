@@ -1,7 +1,9 @@
 package klustair
 
 import (
-	"fmt"
+	"os"
+
+	log "github.com/sirupsen/logrus"
 
 	"github.com/google/uuid"
 	"k8s.io/apimachinery/pkg/types"
@@ -31,7 +33,8 @@ func (ns *NamespaceList) Init(whitelist []string, blacklist []string) {
 
 	namespaceList, err := Client.GetNamespaces()
 	if err != nil {
-		panic(err)
+		log.Fatal(err)
+		os.Exit(1)
 	}
 
 	ns.Total = len(namespaceList.Items)
@@ -53,7 +56,8 @@ func (ns *NamespaceList) Init(whitelist []string, blacklist []string) {
 		n.Init(namespace.Name, namespace.UID, namespace.CreationTimestamp.Unix())
 
 		// TODO remove me
-		fmt.Printf("namespace: %+v\n", n)
+		//fmt.Printf("namespace: %+v\n", n)
+		log.Debug("namespace:", n.Name)
 		ns.Namespaces = append(ns.Namespaces, *n)
 	}
 	ns.Checked = len(ns.Namespaces)
@@ -63,7 +67,6 @@ func (ns *NamespaceList) Init(whitelist []string, blacklist []string) {
 func (ns *NamespaceList) GetNamespaces() []string {
 	var namespacesList []string
 	for _, namespace := range ns.Namespaces {
-		fmt.Println("namespace:", namespace.Name)
 		namespacesList = append(namespacesList, namespace.Name)
 	}
 	return namespacesList

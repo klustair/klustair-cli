@@ -1,9 +1,10 @@
 package klustair
 
 import (
-	"fmt"
+	"os"
 
 	"github.com/aquasecurity/trivy/pkg/report"
+	log "github.com/sirupsen/logrus"
 )
 
 type ObjectsList struct {
@@ -19,7 +20,8 @@ func (ol *ObjectsList) Init(namespaces *NamespaceList) {
 
 		podsList, err := Client.GetPods(namespace.Name)
 		if err != nil {
-			panic(err)
+			log.Fatal(err)
+			os.Exit(1)
 		}
 
 		for _, pod := range podsList.Items {
@@ -29,7 +31,7 @@ func (ol *ObjectsList) Init(namespaces *NamespaceList) {
 
 			// TODO remove me
 			//fmt.Printf("pod: %+v\n", p)
-			fmt.Println("pod:", p.podname)
+			log.Debug("pod:", p.podname)
 			ol.pods = append(ol.pods, p)
 
 			for _, container := range pod.Spec.Containers {

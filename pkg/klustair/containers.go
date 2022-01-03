@@ -1,9 +1,8 @@
 package klustair
 
 import (
-	"fmt"
-
 	"github.com/google/uuid"
+	log "github.com/sirupsen/logrus"
 	v1 "k8s.io/api/core/v1"
 )
 
@@ -40,7 +39,6 @@ func (c *Container) Init(container v1.Container, containerstatus []v1.ContainerS
 	// TODO: This part needs some refinement (Missing fields and unusual values)
 	for _, status := range containerstatus {
 		if status.Name == c.name {
-			fmt.Printf("STATUS: %+v\n", status.Name)
 			c.ready = status.Ready
 			//c.started = status.State.Running != nil
 			c.restartCount = status.RestartCount
@@ -49,5 +47,5 @@ func (c *Container) Init(container v1.Container, containerstatus []v1.ContainerS
 			c.actual = true
 		}
 	}
-	fmt.Println("container: ", c.name, c.ready)
+	log.Debugf("  container: %+s, ready: %+v", c.name, c.ready)
 }

@@ -35,7 +35,6 @@ func (r *Report) Init(label string, whitelist []string, blacklist []string, triv
 
 	//kubeauditAuditors = nil
 	if len(kubeauditAuditors) > 0 && kubeauditAuditors[0] != "" {
-		fmt.Printf("kubeaudit: %+v\n", len(kubeauditAuditors))
 		k := new(kubeaudit.Auditor)
 		nsList := r.namespaces.GetNamespaces()
 		k.SetConfig(kubeauditAuditors)

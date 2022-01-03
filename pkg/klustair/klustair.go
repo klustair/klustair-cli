@@ -4,6 +4,8 @@ import (
 	"fmt"
 	"strings"
 
+	log "github.com/sirupsen/logrus"
+
 	"github.com/klustair/klustair-go/pkg/kubectl"
 	"github.com/urfave/cli/v2"
 )
@@ -20,12 +22,13 @@ type Options struct {
 	Configkey            string
 	Apihost              string
 	Apitoken             string
+	Debug                bool
 }
 
 var Client *kubectl.Client
 
 func RunCli(ctx *cli.Context) error {
-	fmt.Println("run")
+	//fmt.Println("run")
 	opt, _ := loadOpts(ctx)
 	Run(opt)
 	return nil
@@ -33,7 +36,11 @@ func RunCli(ctx *cli.Context) error {
 }
 
 func Run(opt Options) error {
-	fmt.Printf("run with options: %+v\n", opt)
+
+	if opt.Debug {
+		log.SetLevel(log.DebugLevel)
+	}
+	log.Debugf("run with options: %+v\n", opt)
 
 	//initialize Kubectl client
 	Client = kubectl.NewKubectlClient(false)
@@ -70,6 +77,7 @@ func loadOpts(ctx *cli.Context) (Options, error) {
 		Configkey:            ctx.String("configkey"),
 		Apihost:              ctx.String("apihost"),
 		Apitoken:             ctx.String("apitoken"),
+		Debug:                ctx.Bool("debug"),
 	}
 	return opt, nil
 }

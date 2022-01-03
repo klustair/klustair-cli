@@ -1,11 +1,10 @@
 package kubeaudit
 
 import (
-	"fmt"
-
 	"github.com/Shopify/kubeaudit"
 	"github.com/Shopify/kubeaudit/auditors/all"
 	kubeauditconfig "github.com/Shopify/kubeaudit/config"
+	log "github.com/sirupsen/logrus"
 )
 
 //var KubeauditReport *kubeaudit.Report
@@ -19,9 +18,8 @@ type Auditor struct {
 
 func (a *Auditor) SetConfig(auditors []string) kubeauditconfig.KubeauditConfig {
 	auditoorsmap := make(map[string]bool)
-	fmt.Printf("auditors: %+v\n", auditors)
 	for _, a := range auditors {
-		fmt.Printf("auditor: %+v\n", a)
+		log.Debugf("auditor: %+v\n", a)
 		auditoorsmap[a] = true
 	}
 	a.KubeauditConfig.EnabledAuditors = auditoorsmap
@@ -32,7 +30,7 @@ func (a *Auditor) SetConfig(auditors []string) kubeauditconfig.KubeauditConfig {
 func (a *Auditor) Run(namespaces []string) []*kubeaudit.Report {
 	var reports []*kubeaudit.Report
 	for _, namespace := range namespaces {
-		fmt.Printf("namespace: %+v\n", namespace)
+		log.Debugf("Kubeaudit on namespace: %+v", namespace)
 		report := a.Audit(namespace)
 		reports = append(reports, report)
 	}
