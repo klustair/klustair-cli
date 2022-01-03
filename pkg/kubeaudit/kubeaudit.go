@@ -9,11 +9,28 @@ import (
 
 //var KubeauditReport *kubeaudit.Report
 
-type KubeauditReport *kubeaudit.Report
+//type KubeauditReport *kubeaudit.Report
 
 type Auditor struct {
 	KubeauditConfig kubeauditconfig.KubeauditConfig
-	Report          *kubeaudit.Report
+	Report          KubeauditReport
+}
+
+type KubeauditReport struct {
+	Uid                string `json:"uid"`
+	ReportUid          string `json:"report_uid"`
+	NamespaceUid       string `json:"namespace_uid"`
+	AuditType          string `json:"audit_type"`
+	AuditName          string `json:"AuditName"`
+	Message            string `json:"msg"`
+	SeverityLevel      string `json:"level"`
+	ResourceName       string `json:"ResourceName"`
+	Capability         string `json:"Capability"`
+	Container          string `json:"Container"`
+	AuditResultName    string `json:"AuditResultName"`
+	MissingAnnotations string `json:"MissingAnnotations"`
+	ResourceNamespace  string `json:"ResourceNamespace"`
+	ResourceApiVersion string `json:"ResourceApiVersion"`
 }
 
 func (a *Auditor) SetConfig(auditors []string) kubeauditconfig.KubeauditConfig {
@@ -56,7 +73,7 @@ func (a *Auditor) Audit(namespace string) *kubeaudit.Report {
 			panic(err)
 		}
 
-		a.Report = report
+		a.Report = *a.getReport()
 
 		return report
 	} else {
@@ -66,8 +83,15 @@ func (a *Auditor) Audit(namespace string) *kubeaudit.Report {
 			panic(err)
 		}
 
-		a.Report = report
+		a.Report = *a.getReport()
 
 		return report
 	}
+}
+
+func (a *Auditor) getReport() *KubeauditReport {
+	newReport := new(KubeauditReport)
+	// TODO parse report
+	newReport.Uid = "test"
+	return newReport
 }

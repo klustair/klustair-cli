@@ -49,7 +49,7 @@ func Run(opt Options) error {
 	Report := NewReport(opt)
 
 	// TODO debug remove me
-	for _, trivyreport := range Report.objectsList.trivyreports {
+	for _, trivyreport := range Report.trivyreports {
 		fmt.Printf("trivyreport: %+v\n", trivyreport.ArtifactName)
 	}
 

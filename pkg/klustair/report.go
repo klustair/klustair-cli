@@ -42,8 +42,11 @@ func (r *Report) Init(label string, whitelist []string, blacklist []string, triv
 	}
 
 	if trivy {
-		uniqueImages := r.objectsList.GetUniqueImages()
-		r.trivyreports, _ = Trivy.NewScanner().ScanImages(uniqueImages)
+		/*
+			uniqueImages := r.objectsList.GetUniqueImages()
+			r.trivyreports, _ = Trivy.NewScanner().ScanImages(uniqueImages)
+		*/
+		o.ScanImages()
 	}
 
 	rs := new(ReportSummary)
@@ -84,6 +87,51 @@ func (r *Report) Send(opt Options) error {
 
 		//err = apiClient.SendNamespaces(r.Uid, jsonstr)
 		err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/namespace/create", string(jsonstr), "namespace")
+		if err != nil {
+			return err
+		}
+	}
+
+	for _, pod := range r.objectsList.pods {
+		////////////////////////////////////////////////////////////////////////
+		// send pods
+		jsonstr, jsonErr = json.Marshal(pod)
+		if jsonErr != nil {
+			fmt.Printf("json error: %+v\n", jsonErr)
+		}
+
+		//err = apiClient.SendObjects(r.Uid, jsonstr)
+		err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/pod/create", string(jsonstr), "pod")
+		if err != nil {
+			return err
+		}
+	}
+
+	for _, container := range r.objectsList.containers {
+		////////////////////////////////////////////////////////////////////////
+		// send containers
+		jsonstr, jsonErr = json.Marshal(container)
+		if jsonErr != nil {
+			fmt.Printf("json error: %+v\n", jsonErr)
+		}
+
+		//err = apiClient.SendObjects(r.Uid, jsonstr)
+		err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/container/create", string(jsonstr), "container")
+		if err != nil {
+			return err
+		}
+	}
+
+	for _, image := range r.objectsList.uniqueImages {
+		////////////////////////////////////////////////////////////////////////
+		// send containers
+		jsonstr, jsonErr = json.Marshal(image)
+		if jsonErr != nil {
+			fmt.Printf("json error: %+v\n", jsonErr)
+		}
+
+		//err = apiClient.SendObjects(r.Uid, jsonstr)
+		err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/image/create", string(jsonstr), "image")
 		if err != nil {
 			return err
 		}

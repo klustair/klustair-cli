@@ -1,17 +1,17 @@
 package klustair
 
 import (
+	"fmt"
 	"os"
 
-	"github.com/aquasecurity/trivy/pkg/report"
 	log "github.com/sirupsen/logrus"
 )
 
 type ObjectsList struct {
-	pods         []*Pod
-	containers   []*Container
-	images       []*Image
-	trivyreports []*report.Report
+	pods       []*Pod
+	containers []*Container
+	//images       []*Image
+	uniqueImages map[string]*Image
 }
 
 func (ol *ObjectsList) Init(namespaces *NamespaceList) {
@@ -31,8 +31,10 @@ func (ol *ObjectsList) Init(namespaces *NamespaceList) {
 
 			// TODO remove me
 			//fmt.Printf("pod: %+v\n", p)
-			log.Debug("pod:", p.podname)
+			log.Debug("pod:", p.Podname)
 			ol.pods = append(ol.pods, p)
+
+			ol.uniqueImages = make(map[string]*Image)
 
 			for _, container := range pod.Spec.Containers {
 				c := new(Container)
@@ -42,7 +44,8 @@ func (ol *ObjectsList) Init(namespaces *NamespaceList) {
 
 				i := new(Image)
 				i.Init(container.Image)
-				ol.images = append(ol.images, i)
+				//ol.images = append(ol.images, i)
+				ol.uniqueImages[container.Image] = i
 			}
 
 			for _, initcontainer := range pod.Spec.InitContainers {
@@ -53,35 +56,24 @@ func (ol *ObjectsList) Init(namespaces *NamespaceList) {
 
 				i := new(Image)
 				i.Init(initcontainer.Image)
-				ol.images = append(ol.images, i)
+				//ol.images = append(ol.images, i)
+				ol.uniqueImages[initcontainer.Image] = i
 			}
 
 		}
 	}
 }
 
-func (ol *ObjectsList) GetUniqueImages() map[string]*string {
+func (ol *ObjectsList) ScanImages() map[string]string { //replace String with trivy report object
 	//var unique map[]images
-	uniqueImages := make(map[string]*string)
-
-	for _, image := range ol.images {
-		uniqueImages[image.fulltag] = &image.fulltag
-	}
-	return uniqueImages
-}
-
-/*
-func (ol *ObjectsList) ScanImages() {
-	//var unique map[]images
-	uniqueImages := ol.GetUniqueImages()
-	for _, image := range uniqueImages {
-		fmt.Println("fulltag:", image.fulltag)
+	trivyReports := make(map[string]string)
+	for _, image := range ol.uniqueImages {
+		//fmt.Println("fulltag:", image.fulltag)
 		report, err := image.Scan()
 		if err != nil {
 			fmt.Printf("error scanning image: %s", err)
 		}
-		ol.trivyreports = append(ol.trivyreports, &report)
+		trivyReports[image.Fulltag] = report.ArtifactName
 	}
-
+	return trivyReports
 }
-*/
