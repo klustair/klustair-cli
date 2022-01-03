@@ -2,7 +2,6 @@ package kubectl
 
 import (
 	"context"
-	"fmt"
 
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes"
@@ -15,6 +14,8 @@ import (
 	_ "k8s.io/client-go/plugin/pkg/client/auth/oidc"
 	_ "k8s.io/client-go/plugin/pkg/client/auth/openstack"
 	"k8s.io/client-go/rest"
+
+	log "github.com/sirupsen/logrus"
 )
 
 type Client struct {
@@ -22,35 +23,31 @@ type Client struct {
 	inCluster bool
 }
 
-func (c *Client) Init(inCluster bool) {
-	c.inCluster = inCluster
-	c.clientset = GetClientset(inCluster)
+func (c *Client) Init() {
+	c.clientset, c.inCluster = GetClientset()
 }
 
-func NewKubectlClient(inCluster bool) *Client {
+func NewKubectlClient() *Client {
 	c := new(Client)
-	c.Init(inCluster)
+	c.Init()
 	return c
 }
 
-func GetClientset(inCluster bool) *kubernetes.Clientset {
+func GetClientset() (*kubernetes.Clientset, bool) {
 
-	if inCluster {
-
-		// creates the in-cluster config
-		config, err := rest.InClusterConfig()
-		if err != nil {
-			panic(err.Error())
-		}
+	// creates the in-cluster config
+	config, err := rest.InClusterConfig()
+	if err == nil {
+		log.Debug("kubectl: in-cluster config")
 		// creates the clientset
 		clientset, err := kubernetes.NewForConfig(config)
 		if err != nil {
 			panic(err.Error())
 		}
-		// TODO remove me
-		fmt.Printf("clientset: %+v\n", clientset)
-		return clientset
+
+		return clientset, true
 	} else {
+		log.Debug("kubectl: local config")
 		loadingRules := clientcmd.NewDefaultClientConfigLoadingRules()
 
 		configOverrides := &clientcmd.ConfigOverrides{}
@@ -66,7 +63,7 @@ func GetClientset(inCluster bool) *kubernetes.Clientset {
 		if err != nil {
 			panic(err.Error())
 		}
-		return clientset
+		return clientset, false
 	}
 }
 

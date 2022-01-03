@@ -43,7 +43,7 @@ func Run(opt Options) error {
 	log.Debugf("run with options: %+v\n", opt)
 
 	//initialize Kubectl client
-	Client = kubectl.NewKubectlClient(false)
+	Client = kubectl.NewKubectlClient()
 
 	//initialize Klustair Report
 	Report := NewReport(opt)
