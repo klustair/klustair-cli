@@ -64,7 +64,7 @@ func (r *Report) Send(opt Options) error {
 	apiClient := api.NewApiClient(opt.Apihost, opt.Apitoken)
 
 	////////////////////////////////////////////////////////////////////////////
-	// send send report
+	// send report
 	jsonstr, jsonErr := json.Marshal(r)
 	if jsonErr != nil {
 		fmt.Printf("json error: %+v\n", jsonstr)
@@ -76,8 +76,8 @@ func (r *Report) Send(opt Options) error {
 	}
 
 	for _, namespace := range r.namespaces.Namespaces {
-		////////////////////////////////////////////////////////////////////////////
-		// send send namespaces
+		////////////////////////////////////////////////////////////////////////
+		// send namespaces
 		jsonstr, jsonErr = json.Marshal(namespace)
 		if jsonErr != nil {
 			fmt.Printf("json error: %+v\n", jsonErr)
