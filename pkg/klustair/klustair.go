@@ -53,10 +53,11 @@ func Run(opt Options) error {
 		fmt.Printf("trivyreport: %+v\n", trivyreport.ArtifactName)
 	}
 
-	// TODO debug remove me
-	fmt.Printf("kubeauditReport: %+v\n", Report.kubeauditReports)
-	fmt.Printf("Report: %+v\n", Report)
-
+	/*
+		// TODO debug remove me
+		fmt.Printf("kubeauditReport: %+v\n", Report.kubeauditReports)
+		fmt.Printf("Report: %+v\n", Report)
+	*/
 	if opt.Apihost != "" && opt.Apitoken != "" {
 		Report.Send(opt)
 	}

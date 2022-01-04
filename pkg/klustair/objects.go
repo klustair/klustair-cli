@@ -1,20 +1,19 @@
 package klustair
 
 import (
-	"fmt"
 	"os"
 
 	log "github.com/sirupsen/logrus"
 )
 
 type ObjectsList struct {
-	pods       []*Pod
-	containers []*Container
-	//images       []*Image
+	pods         []*Pod
+	containers   []*Container
 	uniqueImages map[string]*Image
 }
 
 func (ol *ObjectsList) Init(namespaces *NamespaceList) {
+	ol.uniqueImages = make(map[string]*Image)
 
 	for _, namespace := range namespaces.Namespaces {
 
@@ -33,8 +32,6 @@ func (ol *ObjectsList) Init(namespaces *NamespaceList) {
 			//fmt.Printf("pod: %+v\n", p)
 			log.Debug("pod:", p.Podname)
 			ol.pods = append(ol.pods, p)
-
-			ol.uniqueImages = make(map[string]*Image)
 
 			for _, container := range pod.Spec.Containers {
 				c := new(Container)
@@ -68,10 +65,10 @@ func (ol *ObjectsList) ScanImages() map[string]string { //replace String with tr
 	//var unique map[]images
 	trivyReports := make(map[string]string)
 	for _, image := range ol.uniqueImages {
-		//fmt.Println("fulltag:", image.fulltag)
+		log.Debug("Trivy scan image fulltag:", image.Fulltag)
 		report, err := image.Scan()
 		if err != nil {
-			fmt.Printf("error scanning image: %s", err)
+			log.Errorf("error scanning image: %s", err)
 		}
 		trivyReports[image.Fulltag] = report.ArtifactName
 	}

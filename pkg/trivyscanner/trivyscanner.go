@@ -23,6 +23,9 @@ func (t *Trivy) NewScanner() *Trivy {
 }
 
 func GetOption() artifact.Option {
+
+	//file, _ := os.Create("/tmp/trivy.txt")
+	//file, _ := os.Create(os.DevNull)
 	option := artifact.Option{
 		GlobalOption: option.GlobalOption{
 			Context:    nil,
@@ -34,7 +37,7 @@ func GetOption() artifact.Option {
 		},
 		ArtifactOption: option.ArtifactOption{
 			Input:      "",
-			Timeout:    time.Duration(15 * time.Second),
+			Timeout:    time.Duration(150 * time.Second),
 			ClearCache: false,
 
 			SkipDirs:  []string{},
@@ -55,7 +58,7 @@ func GetOption() artifact.Option {
 			ListAllPkgs:     false,
 		},
 		ReportOption: option.ReportOption{
-			Format:   "table",
+			Format:   "template",
 			Template: "",
 
 			IgnoreFile:    "",
@@ -69,7 +72,7 @@ func GetOption() artifact.Option {
 			},
 			SecurityChecks: []string{
 				"vuln",
-				//"config",
+				"config",
 			},
 			Output: nil, //nil, //os.Stdout, //file
 			Severities: []dbTypes.Severity{
@@ -108,21 +111,3 @@ func (t *Trivy) Scan(image string) (report.Report, error) {
 	return artifact.ImageRunLib(ctx, t.Options)
 
 }
-
-/*
-func (t *Trivy) ScanImages(uniqueImages map[string]*string) ([]*report.Report, error) {
-	var reports []*report.Report
-	for fulltag := range uniqueImages {
-		//fmt.Println("run Trivy on:", fulltag)
-		log.Infof("run Trivy on: %s", fulltag)
-		//continue // Skip scan
-		report, err := t.Scan(fulltag)
-		if err != nil {
-			log.Errorf("error scanning fulltag: %s", err)
-			continue
-		}
-		reports = append(reports, &report)
-	}
-	return reports, nil
-}
-*/
