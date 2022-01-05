@@ -1,9 +1,12 @@
 package kubeaudit
 
 import (
+	"time"
+
 	"github.com/Shopify/kubeaudit"
 	"github.com/Shopify/kubeaudit/auditors/all"
 	kubeauditconfig "github.com/Shopify/kubeaudit/config"
+	"github.com/Shopify/kubeaudit/pkg/k8s"
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 )
@@ -28,8 +31,8 @@ func (a *Auditor) SetConfig(auditors []string) kubeauditconfig.KubeauditConfig {
 	return a.KubeauditConfig
 }
 
-func (a *Auditor) Run(namespaces []string) []*KubeauditReport {
-	var reports []*KubeauditReport
+func (a *Auditor) Run(namespaces []string) [][]KubeauditReport {
+	var reports [][]KubeauditReport // List of namespaces and a list of reports
 	for _, namespace := range namespaces {
 		log.Debugf("Kubeaudit on namespace: %+v", namespace)
 		report := a.Audit(namespace)
@@ -38,7 +41,7 @@ func (a *Auditor) Run(namespaces []string) []*KubeauditReport {
 	return reports
 }
 
-func (a *Auditor) Audit(namespace string) *KubeauditReport {
+func (a *Auditor) Audit(namespace string) []KubeauditReport {
 	auditors, err := all.Auditors(kubeauditconfig.KubeauditConfig{})
 	if err != nil {
 		panic(err)
@@ -57,8 +60,6 @@ func (a *Auditor) Audit(namespace string) *KubeauditReport {
 		}
 		a.Report = *report
 
-		//a.Report = *a.getReport()
-
 		return a.getReport()
 	} else {
 		report, err := kubeAuditor.AuditCluster(kubeaudit.AuditOptions{Namespace: namespace})
@@ -66,8 +67,6 @@ func (a *Auditor) Audit(namespace string) *KubeauditReport {
 			panic(err)
 		}
 		a.Report = *report
-
-		//a.Report = *a.getReport()
 
 		return a.getReport()
 	}
@@ -77,22 +76,91 @@ type KubeauditReport struct {
 	Uid                string `json:"uid"`
 	ReportUid          string `json:"report_uid"`
 	NamespaceUid       string `json:"namespace_uid"`
+	AuditTime          string `json:"time"`
 	AuditType          string `json:"audit_type"`
 	AuditName          string `json:"AuditName"`
 	Message            string `json:"msg"`
 	SeverityLevel      string `json:"level"`
-	ResourceName       string `json:"ResourceName"`
 	Capability         string `json:"Capability"`
 	Container          string `json:"Container"`
-	AuditResultName    string `json:"AuditResultName"`
 	MissingAnnotations string `json:"MissingAnnotations"`
+	ResourceName       string `json:"ResourceName"`
 	ResourceNamespace  string `json:"ResourceNamespace"`
 	ResourceApiVersion string `json:"ResourceApiVersion"`
 }
 
-func (a *Auditor) getReport() *KubeauditReport {
-	newReport := new(KubeauditReport)
-	// TODO parse report
-	newReport.Uid = uuid.New().String()
-	return newReport
+func (a *Auditor) getReport() []KubeauditReport {
+	//a.Report.PrintResults()
+	var kubeauditReports []KubeauditReport
+	for _, r := range a.Report.Results() {
+		//log.Debugf("Result: %+v\n", r)
+		ok := r.GetResource().Object().GetObjectKind()
+		//objectGroup := ok.GroupVersionKind().Group
+		objectKind := ok.GroupVersionKind().Kind
+		objectMeta := k8s.GetObjectMeta(r.GetResource().Object())
+
+		resourceApiVersion := ok.GroupVersionKind().Version
+		resourceName := objectMeta.GetName()
+		resourceNamespace := objectMeta.GetNamespace()
+
+		/*
+			fmt.Printf("objectGroup: %v\n", objectGroup)
+			fmt.Printf("objectKind: %v\n", objectKind)
+		*/
+
+		for _, o := range r.GetAuditResults() {
+
+			k := KubeauditReport{
+				Uid: uuid.New().String(),
+				//ReportUid:     a.Report.Uid,
+				//NamespaceUid:  a.Report.Namespace,
+				AuditName:          o.Name,
+				Message:            o.Message,
+				AuditTime:          time.Now().Local().String(),
+				SeverityLevel:      o.Severity.String(),
+				AuditType:          "unknown",
+				ResourceName:       resourceName,
+				ResourceNamespace:  resourceNamespace,
+				ResourceApiVersion: resourceApiVersion,
+			}
+
+			if o.Name == "CapabilityAddedAllowed" {
+				k.Capability = o.Metadata["Metadata"]
+			}
+
+			// ugly but need to flatten this out a bit
+			if objectKind == "Deployment" ||
+				objectKind == "StatefulSet" ||
+				objectKind == "DaemonSet" ||
+				objectKind == "ReplicaSet" ||
+				objectKind == "Pod" ||
+				objectKind == "ReplicationController" ||
+				objectKind == "Job" ||
+				objectKind == "PodTemplate" ||
+				objectKind == "CronJob" {
+				k.AuditType = "pod"
+			} else if objectKind == "Namespace" {
+				k.AuditType = "namespace"
+			} else if objectKind == "Service" {
+				k.AuditType = "service"
+			} else if objectKind == "ServiceAccount" {
+				k.AuditType = "serviceAccount"
+			} else if objectKind == "NetworkPolicy" {
+				k.AuditType = "networkPolicy"
+			}
+
+			if container, ok := o.Metadata["Container"]; ok {
+				k.AuditType = "container"
+				k.Container = container
+			}
+
+			if annotation, ok := o.Metadata["MissingAnnotation"]; ok {
+				k.MissingAnnotations = annotation
+			}
+			//log.Debugf("KubeauditReport: %+v\n", k)
+			kubeauditReports = append(kubeauditReports, k)
+		}
+	}
+
+	return kubeauditReports
 }

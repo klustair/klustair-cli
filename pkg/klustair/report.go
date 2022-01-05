@@ -14,7 +14,7 @@ type Report struct {
 	Label            string `json:"title"`
 	namespaces       *NamespaceList
 	objectsList      *ObjectsList
-	kubeauditReports []*kubeaudit.KubeauditReport
+	kubeauditReports [][]kubeaudit.KubeauditReport
 	targetslist      Targetslist
 	reportSummary    *ReportSummary
 }
