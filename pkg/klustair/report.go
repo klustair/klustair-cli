@@ -29,7 +29,7 @@ func (r *Report) Init(label string, whitelist []string, blacklist []string, triv
 	r.namespaces = ns
 
 	o := new(ObjectsList)
-	o.Init(r.namespaces)
+	o.Init(r.Uid, r.namespaces)
 	r.objectsList = o
 
 	//kubeauditAuditors = nil
@@ -132,18 +132,20 @@ func (r *Report) Send(opt Options) error {
 		}
 	}
 
-	for image, target := range r.targetslist {
+	for _, image := range r.targetslist {
 		////////////////////////////////////////////////////////////////////////
 		// send containers
-		jsonstr, jsonErr = json.Marshal(target)
-		if jsonErr != nil {
-			fmt.Printf("json error: %+v\n", jsonErr)
-		}
+		for _, target := range image {
+			jsonstr, jsonErr = json.Marshal(target)
+			if jsonErr != nil {
+				fmt.Printf("json error: %+v\n", jsonErr)
+			}
 
-		//err = apiClient.SendObjects(r.Uid, jsonstr)/api/v1/pac/report/{report_uid}/{image_uid}/vuln/create
-		err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/"+image+"/target/create", string(jsonstr), "target")
-		if err != nil {
-			return err
+			//err = apiClient.SendObjects(r.Uid, jsonstr)/api/v1/pac/report/{report_uid}/{image_uid}/vuln/create
+			err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/"+target.ImageUid+"/target/create", string(jsonstr), "target")
+			if err != nil {
+				return err
+			}
 		}
 	}
 

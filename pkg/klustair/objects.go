@@ -3,7 +3,6 @@ package klustair
 import (
 	"os"
 
-	"github.com/klustair/klustair-go/pkg/trivyscanner"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -13,9 +12,9 @@ type ObjectsList struct {
 	uniqueImages map[string]*Image
 }
 
-type Targetslist map[string][]trivyscanner.Target
+type Targetslist map[string][]*Target
 
-func (ol *ObjectsList) Init(namespaces *NamespaceList) {
+func (ol *ObjectsList) Init(reportUid string, namespaces *NamespaceList) {
 	ol.uniqueImages = make(map[string]*Image)
 
 	for _, namespace := range namespaces.Namespaces {
@@ -29,7 +28,7 @@ func (ol *ObjectsList) Init(namespaces *NamespaceList) {
 		for _, pod := range podsList.Items {
 
 			p := new(Pod)
-			p.Init(namespace.Uid, pod)
+			p.Init(reportUid, namespace.Uid, pod)
 
 			// TODO remove me
 			//fmt.Printf("pod: %+v\n", p)
@@ -38,7 +37,7 @@ func (ol *ObjectsList) Init(namespaces *NamespaceList) {
 
 			for _, container := range pod.Spec.Containers {
 				c := new(Container)
-				c.Init(container, pod.Status.ContainerStatuses, false)
+				c.Init(reportUid, namespace.Uid, p.Uid, container, pod.Status.ContainerStatuses, false)
 				//fmt.Printf("container: %+v\n", c)
 				ol.containers = append(ol.containers, c)
 
@@ -50,7 +49,7 @@ func (ol *ObjectsList) Init(namespaces *NamespaceList) {
 
 			for _, initcontainer := range pod.Spec.InitContainers {
 				c := new(Container)
-				c.Init(initcontainer, pod.Status.ContainerStatuses, true)
+				c.Init(reportUid, namespace.Uid, p.Uid, initcontainer, pod.Status.ContainerStatuses, true)
 				//fmt.Printf("initcontainer: %+v\n", c)
 				ol.containers = append(ol.containers, c)
 
@@ -64,7 +63,7 @@ func (ol *ObjectsList) Init(namespaces *NamespaceList) {
 	}
 }
 
-func (ol *ObjectsList) ScanImages() Targetslist { //replace String with trivy report object
+func (ol *ObjectsList) ScanImages() Targetslist {
 	//var unique map[]images
 	trivyReports := make(Targetslist)
 	for _, image := range ol.uniqueImages {

@@ -28,7 +28,7 @@ func (c *ApiClient) Submit(method string, path string, json string, schema strin
 		return err
 	}
 	fmt.Printf("path: %+v\n", path)
-	fmt.Printf("sendRequest: %+v\n", json)
+	//fmt.Printf("sendRequest: %+v\n", json)
 	return nil
 
 	req, err := http.NewRequest(method, c.apiHost+path, strings.NewReader(json))

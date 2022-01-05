@@ -28,8 +28,11 @@ type ContainersList struct {
 	containers []Container
 }
 
-func (c *Container) Init(container v1.Container, containerstatus []v1.ContainerStatus, init_container bool) {
+func (c *Container) Init(reportUid string, namespaceUid string, podUid string, container v1.Container, containerstatus []v1.ContainerStatus, init_container bool) {
 	c.Uid = uuid.New().String()
+	c.ReportUid = reportUid
+	c.NamespaceUid = namespaceUid
+	c.Pod_uid = podUid
 	c.Name = container.Name
 	c.Image = container.Image
 	c.Image_pull_policy = string(container.ImagePullPolicy)

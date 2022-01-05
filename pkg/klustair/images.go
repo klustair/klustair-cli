@@ -30,7 +30,7 @@ type Image struct {
 	Config        string `json:"config"`
 	History       string `json:"history"`
 	Age           int    `json:"age"`
-	Targets       []trivyscanner.Target
+	Targets       []*Target
 }
 
 func (i *Image) Init(fulltag string) {
@@ -39,7 +39,7 @@ func (i *Image) Init(fulltag string) {
 	log.Debugf("    image: %+s", fulltag)
 }
 
-func (i *Image) Scan() ([]trivyscanner.Target, error) {
+func (i *Image) Scan() ([]*Target, error) {
 	trivy := Trivy.NewScanner()
 
 	// scan image
@@ -63,31 +63,28 @@ func (i *Image) Scan() ([]trivyscanner.Target, error) {
 	return targets, err
 }
 
-func (i *Image) getVulnerabilities(report report.Report) []trivyscanner.Target {
-	var targets []trivyscanner.Target
+func (i *Image) getVulnerabilities(report report.Report) []*Target {
+	var targets []*Target
 	for _, target := range report.Results {
-		t := trivyscanner.Target{
-			Vulnerabilities: []trivyscanner.Vulnerability{},
-		}
+		t := NewTarget(i.ReportUid, i.Uid)
 		for _, vuln := range target.Vulnerabilities {
 			//TODO delete me
 			//fmt.Printf("CVSS:%+v\n", vuln.CVSS)
-			v := trivyscanner.Vulnerability{
-				VulnerabilityID:  vuln.VulnerabilityID,
-				PkgName:          vuln.PkgName,
-				InstalledVersion: vuln.InstalledVersion,
-				FixedVersion:     vuln.FixedVersion,
-				Title:            vuln.Title,
-				Description:      vuln.Description,
-				Severity:         vuln.Severity,
-				SeveritySource:   vuln.SeveritySource,
-				LastModifiedDate: vuln.LastModifiedDate,
-				PublishedDate:    vuln.PublishedDate,
-				References:       vuln.References,
-				// TODO fill with cvss
-				//CVSS:             vuln.CVSS,
-				CweIDs: vuln.CweIDs,
-			}
+			v := NewVulnerability(i.ReportUid, i.Uid, t.Uid)
+			v.VulnerabilityID = vuln.VulnerabilityID
+			v.PkgName = vuln.PkgName
+			v.Title = vuln.Title
+			v.Description = vuln.Description
+			v.InstalledVersion = vuln.InstalledVersion
+			v.FixedVersion = vuln.FixedVersion
+			v.SeveritySource = vuln.SeveritySource
+			v.Severity = vuln.Severity
+			v.LastModifiedDate = vuln.LastModifiedDate
+			v.PublishedDate = vuln.PublishedDate
+			v.References = vuln.References
+			// TODO fill with cvss
+			//v.CVSS = vuln.CVSS
+			v.CweIDs = vuln.CweIDs
 			t.Vulnerabilities = append(t.Vulnerabilities, v)
 		}
 		//i.Targets = append(i.Targets, t)
