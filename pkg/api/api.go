@@ -27,6 +27,7 @@ func (c *ApiClient) Submit(method string, path string, json string, schema strin
 		fmt.Println("Error validating json: ", err, schema)
 		return err
 	}
+	fmt.Printf("path: %+v\n", path)
 	fmt.Printf("sendRequest: %+v\n", json)
 	return nil
 

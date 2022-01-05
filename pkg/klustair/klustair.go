@@ -1,7 +1,6 @@
 package klustair
 
 import (
-	"fmt"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -49,9 +48,11 @@ func Run(opt Options) error {
 	Report := NewReport(opt)
 
 	// TODO debug remove me
-	for _, trivyreport := range Report.trivyreports {
-		fmt.Printf("trivyreport: %+v\n", trivyreport.ArtifactName)
-	}
+	/*
+		for _, target := range Report.targetslist {
+			fmt.Printf("trivyreport: %+v\n", target)
+		}
+	*/
 
 	/*
 		// TODO debug remove me

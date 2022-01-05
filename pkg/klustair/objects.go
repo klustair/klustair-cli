@@ -3,6 +3,7 @@ package klustair
 import (
 	"os"
 
+	"github.com/klustair/klustair-go/pkg/trivyscanner"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -11,6 +12,8 @@ type ObjectsList struct {
 	containers   []*Container
 	uniqueImages map[string]*Image
 }
+
+type Targetslist map[string][]trivyscanner.Target
 
 func (ol *ObjectsList) Init(namespaces *NamespaceList) {
 	ol.uniqueImages = make(map[string]*Image)
@@ -61,16 +64,16 @@ func (ol *ObjectsList) Init(namespaces *NamespaceList) {
 	}
 }
 
-func (ol *ObjectsList) ScanImages() map[string]string { //replace String with trivy report object
+func (ol *ObjectsList) ScanImages() Targetslist { //replace String with trivy report object
 	//var unique map[]images
-	trivyReports := make(map[string]string)
+	trivyReports := make(Targetslist)
 	for _, image := range ol.uniqueImages {
 		log.Debug("Trivy scan image fulltag:", image.Fulltag)
-		report, err := image.Scan()
+		targets, err := image.Scan()
 		if err != nil {
 			log.Errorf("error scanning image: %s", err)
 		}
-		trivyReports[image.Fulltag] = report.ArtifactName
+		trivyReports[image.Uid] = targets
 	}
 	return trivyReports
 }

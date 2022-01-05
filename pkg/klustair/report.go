@@ -5,7 +5,6 @@ import (
 	"fmt"
 
 	ka "github.com/Shopify/kubeaudit"
-	"github.com/aquasecurity/trivy/pkg/report"
 	"github.com/google/uuid"
 	"github.com/klustair/klustair-go/pkg/api"
 	"github.com/klustair/klustair-go/pkg/kubeaudit"
@@ -17,7 +16,7 @@ type Report struct {
 	namespaces       *NamespaceList
 	objectsList      *ObjectsList
 	kubeauditReports []*ka.Report
-	trivyreports     []*report.Report
+	targetslist      Targetslist
 	reportSummary    *ReportSummary
 }
 
@@ -42,11 +41,7 @@ func (r *Report) Init(label string, whitelist []string, blacklist []string, triv
 	}
 
 	if trivy {
-		/*
-			uniqueImages := r.objectsList.GetUniqueImages()
-			r.trivyreports, _ = Trivy.NewScanner().ScanImages(uniqueImages)
-		*/
-		o.ScanImages()
+		r.targetslist = o.ScanImages()
 	}
 
 	rs := new(ReportSummary)
@@ -132,6 +127,21 @@ func (r *Report) Send(opt Options) error {
 
 		//err = apiClient.SendObjects(r.Uid, jsonstr)
 		err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/image/create", string(jsonstr), "image")
+		if err != nil {
+			return err
+		}
+	}
+
+	for image, target := range r.targetslist {
+		////////////////////////////////////////////////////////////////////////
+		// send containers
+		jsonstr, jsonErr = json.Marshal(target)
+		if jsonErr != nil {
+			fmt.Printf("json error: %+v\n", jsonErr)
+		}
+
+		//err = apiClient.SendObjects(r.Uid, jsonstr)/api/v1/pac/report/{report_uid}/{image_uid}/vuln/create
+		err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/"+image+"/target/create", string(jsonstr), "target")
 		if err != nil {
 			return err
 		}
