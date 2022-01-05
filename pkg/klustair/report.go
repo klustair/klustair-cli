@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"fmt"
 
-	ka "github.com/Shopify/kubeaudit"
 	"github.com/google/uuid"
 	"github.com/klustair/klustair-go/pkg/api"
 	"github.com/klustair/klustair-go/pkg/kubeaudit"
@@ -15,7 +14,7 @@ type Report struct {
 	Label            string `json:"title"`
 	namespaces       *NamespaceList
 	objectsList      *ObjectsList
-	kubeauditReports []*ka.Report
+	kubeauditReports []*kubeaudit.KubeauditReport
 	targetslist      Targetslist
 	reportSummary    *ReportSummary
 }
@@ -32,7 +31,7 @@ func (r *Report) Init(label string, whitelist []string, blacklist []string, triv
 	o.Init(r.Uid, r.namespaces)
 	r.objectsList = o
 
-	//kubeauditAuditors = nil
+	// run kubeaudit scans if enabled
 	if len(kubeauditAuditors) > 0 && kubeauditAuditors[0] != "" {
 		k := new(kubeaudit.Auditor)
 		nsList := r.namespaces.GetNamespaces()
@@ -40,6 +39,7 @@ func (r *Report) Init(label string, whitelist []string, blacklist []string, triv
 		r.kubeauditReports = k.Run(nsList)
 	}
 
+	// run trivy scans if enabled
 	if trivy {
 		r.targetslist = o.ScanImages()
 	}
@@ -57,7 +57,7 @@ func NewReport(opt Options) *Report {
 }
 
 func (r *Report) Send(opt Options) error {
-	fmt.Println("SEND REPORT ------------------")
+	fmt.Println("SEND REPORT ------------------>>")
 	apiClient := api.NewApiClient(opt.Apihost, opt.Apitoken)
 
 	////////////////////////////////////////////////////////////////////////////
@@ -146,6 +146,21 @@ func (r *Report) Send(opt Options) error {
 			if err != nil {
 				return err
 			}
+		}
+	}
+
+	for _, audit := range r.kubeauditReports {
+		////////////////////////////////////////////////////////////////////////
+		// send containers
+		jsonstr, jsonErr = json.Marshal(audit)
+		if jsonErr != nil {
+			fmt.Printf("json error: %+v\n", jsonErr)
+		}
+
+		//err = apiClient.SendObjects(r.Uid, jsonstr)
+		err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/audit/create", string(jsonstr), "audit")
+		if err != nil {
+			return err
 		}
 	}
 

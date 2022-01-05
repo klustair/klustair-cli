@@ -4,6 +4,7 @@ import (
 	"github.com/Shopify/kubeaudit"
 	"github.com/Shopify/kubeaudit/auditors/all"
 	kubeauditconfig "github.com/Shopify/kubeaudit/config"
+	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -13,7 +14,63 @@ import (
 
 type Auditor struct {
 	KubeauditConfig kubeauditconfig.KubeauditConfig
-	Report          KubeauditReport
+	Report          kubeaudit.Report
+}
+
+func (a *Auditor) SetConfig(auditors []string) kubeauditconfig.KubeauditConfig {
+	auditoorsmap := make(map[string]bool)
+	for _, a := range auditors {
+		log.Debugf("auditor: %+v\n", a)
+		auditoorsmap[a] = true
+	}
+	a.KubeauditConfig.EnabledAuditors = auditoorsmap
+
+	return a.KubeauditConfig
+}
+
+func (a *Auditor) Run(namespaces []string) []*KubeauditReport {
+	var reports []*KubeauditReport
+	for _, namespace := range namespaces {
+		log.Debugf("Kubeaudit on namespace: %+v", namespace)
+		report := a.Audit(namespace)
+		reports = append(reports, report)
+	}
+	return reports
+}
+
+func (a *Auditor) Audit(namespace string) *KubeauditReport {
+	auditors, err := all.Auditors(kubeauditconfig.KubeauditConfig{})
+	if err != nil {
+		panic(err)
+	}
+
+	kubeAuditor, err := kubeaudit.New(auditors)
+	if err != nil {
+		panic(err)
+	}
+
+	// TODO Need some love here.
+	if true {
+		report, err := kubeAuditor.AuditLocal("", kubeaudit.AuditOptions{Namespace: namespace})
+		if err != nil {
+			panic(err)
+		}
+		a.Report = *report
+
+		//a.Report = *a.getReport()
+
+		return a.getReport()
+	} else {
+		report, err := kubeAuditor.AuditCluster(kubeaudit.AuditOptions{Namespace: namespace})
+		if err != nil {
+			panic(err)
+		}
+		a.Report = *report
+
+		//a.Report = *a.getReport()
+
+		return a.getReport()
+	}
 }
 
 type KubeauditReport struct {
@@ -33,65 +90,9 @@ type KubeauditReport struct {
 	ResourceApiVersion string `json:"ResourceApiVersion"`
 }
 
-func (a *Auditor) SetConfig(auditors []string) kubeauditconfig.KubeauditConfig {
-	auditoorsmap := make(map[string]bool)
-	for _, a := range auditors {
-		log.Debugf("auditor: %+v\n", a)
-		auditoorsmap[a] = true
-	}
-	a.KubeauditConfig.EnabledAuditors = auditoorsmap
-
-	return a.KubeauditConfig
-}
-
-func (a *Auditor) Run(namespaces []string) []*kubeaudit.Report {
-	var reports []*kubeaudit.Report
-	for _, namespace := range namespaces {
-		log.Debugf("Kubeaudit on namespace: %+v", namespace)
-		report := a.Audit(namespace)
-		reports = append(reports, report)
-	}
-	return reports
-}
-
-func (a *Auditor) Audit(namespace string) *kubeaudit.Report {
-	auditors, err := all.Auditors(kubeauditconfig.KubeauditConfig{})
-	if err != nil {
-		panic(err)
-	}
-
-	kubeAuditor, err := kubeaudit.New(auditors)
-	if err != nil {
-		panic(err)
-	}
-
-	// TODO Need some love here.
-	if true {
-		report, err := kubeAuditor.AuditLocal("", kubeaudit.AuditOptions{Namespace: namespace})
-
-		if err != nil {
-			panic(err)
-		}
-
-		a.Report = *a.getReport()
-
-		return report
-	} else {
-		report, err := kubeAuditor.AuditCluster(kubeaudit.AuditOptions{Namespace: namespace})
-
-		if err != nil {
-			panic(err)
-		}
-
-		a.Report = *a.getReport()
-
-		return report
-	}
-}
-
 func (a *Auditor) getReport() *KubeauditReport {
 	newReport := new(KubeauditReport)
 	// TODO parse report
-	newReport.Uid = "test"
+	newReport.Uid = uuid.New().String()
 	return newReport
 }
