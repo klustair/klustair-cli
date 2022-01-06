@@ -112,6 +112,7 @@ func (a *Auditor) getReport() []KubeauditReport {
 
 			k := KubeauditReport{
 				Uid: uuid.New().String(),
+				//TODO those fields are mandatory !!
 				//ReportUid:     a.Report.Uid,
 				//NamespaceUid:  a.Report.Namespace,
 				AuditName:          o.Name,

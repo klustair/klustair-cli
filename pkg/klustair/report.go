@@ -10,13 +10,14 @@ import (
 )
 
 type Report struct {
-	Uid              string `json:"uid"`
-	Label            string `json:"title"`
-	namespaces       *NamespaceList
-	objectsList      *ObjectsList
-	kubeauditReports [][]kubeaudit.KubeauditReport
-	targetslist      Targetslist
-	reportSummary    *ReportSummary
+	Uid               string `json:"uid"`
+	Label             string `json:"title"`
+	namespaces        *NamespaceList
+	objectsList       *ObjectsList
+	kubeauditReports  [][]kubeaudit.KubeauditReport
+	targetslist       Targetslist
+	reportSummary     *ReportSummary
+	containerHasImage []*ContainerHasImage
 }
 
 func (r *Report) Init(label string, whitelist []string, blacklist []string, trivy bool, kubeauditAuditors []string) {
@@ -43,6 +44,8 @@ func (r *Report) Init(label string, whitelist []string, blacklist []string, triv
 	if trivy {
 		r.targetslist = o.ScanImages()
 	}
+
+	r.containerHasImage = o.linkImagesToContainers(trivy)
 
 	rs := new(ReportSummary)
 	rs.Init()
@@ -132,10 +135,10 @@ func (r *Report) Send(opt Options) error {
 		}
 	}
 
-	for _, image := range r.targetslist {
+	for _, images := range r.targetslist {
 		////////////////////////////////////////////////////////////////////////
-		// send containers
-		for _, target := range image {
+		// send targets
+		for _, target := range images {
 			jsonstr, jsonErr = json.Marshal(target)
 			if jsonErr != nil {
 				fmt.Printf("json error: %+v\n", jsonErr)
@@ -151,7 +154,7 @@ func (r *Report) Send(opt Options) error {
 
 	for _, audit := range r.kubeauditReports {
 		////////////////////////////////////////////////////////////////////////
-		// send containers
+		// send kubeaudit reports
 		jsonstr, jsonErr = json.Marshal(audit)
 		if jsonErr != nil {
 			fmt.Printf("json error: %+v\n", jsonErr)
@@ -164,6 +167,20 @@ func (r *Report) Send(opt Options) error {
 		}
 	}
 
+	for _, chi := range r.containerHasImage {
+		////////////////////////////////////////////////////////////////////////
+		// send containers to image links
+		jsonstr, jsonErr = json.Marshal(chi)
+		if jsonErr != nil {
+			fmt.Printf("json error: %+v\n", jsonErr)
+		}
+
+		//err = apiClient.SendObjects(r.Uid, jsonstr)
+		err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/containerhasimage/create", string(jsonstr), "chi")
+		if err != nil {
+			return err
+		}
+	}
 	return nil
 
 }

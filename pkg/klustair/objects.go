@@ -76,3 +76,38 @@ func (ol *ObjectsList) ScanImages() Targetslist {
 	}
 	return trivyReports
 }
+
+type ContainerHasImage struct {
+	ReportUid    string `json:"report_uid"`
+	ContainerUid string `json:"container_uid"`
+	ImageUid     string `json:"image_uid"`
+}
+
+func (ol *ObjectsList) linkImagesToContainers(trivyScan bool) []*ContainerHasImage {
+	var containerHasImages []*ContainerHasImage
+
+	// iterate over all container and find the corresponding image
+	for _, container := range ol.containers {
+		for _, image := range ol.uniqueImages {
+			if container.Image == image.Fulltag {
+				containerHasImages = append(containerHasImages, &ContainerHasImage{
+					ReportUid:    container.ReportUid,
+					ContainerUid: container.Uid,
+					ImageUid:     image.Uid,
+				})
+			}
+
+			// works only after a trivy scan
+			if trivyScan {
+				// TODO needs some refinment sice they are not completly equal
+				if container.ImageID == image.ImageDigest {
+					container.Actual = true
+				} else {
+					container.Actual = false
+				}
+			}
+
+		}
+	}
+	return containerHasImages
+}
