@@ -1,0 +1,24 @@
+{
+    "fields": [
+        {
+            "name": "name",
+            "type": "string",
+            "required": true
+        },
+        {
+            "name": "uid",
+            "type": "string",
+            "required": true
+        },
+        {
+            "name": "kubernetes_namespace_uid",
+            "type": "string",
+            "required": true
+        },
+        {
+            "name": "creation_timestamp",
+            "type": "integer",
+            "required": true
+        }
+    ]
+}

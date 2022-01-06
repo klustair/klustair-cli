@@ -7,6 +7,7 @@ import (
 	"github.com/google/uuid"
 	"github.com/klustair/klustair-go/pkg/api"
 	"github.com/klustair/klustair-go/pkg/kubeaudit"
+	log "github.com/sirupsen/logrus"
 )
 
 type Report struct {
@@ -72,68 +73,63 @@ func (r *Report) Send(opt Options) error {
 
 	err := apiClient.Submit("POST", "/api/v1/pac/report/create", string(jsonstr), "report")
 	if err != nil {
+		log.Errorf("error: %+v\n", err)
 		return err
 	}
 
-	for _, namespace := range r.namespaces.Namespaces {
-		////////////////////////////////////////////////////////////////////////
-		// send namespaces
-		jsonstr, jsonErr = json.Marshal(namespace)
-		if jsonErr != nil {
-			fmt.Printf("json error: %+v\n", jsonErr)
-		}
-
-		//err = apiClient.SendNamespaces(r.Uid, jsonstr)
-		err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/namespace/create", string(jsonstr), "namespace")
-		if err != nil {
-			return err
-		}
+	////////////////////////////////////////////////////////////////////////
+	// send namespaces
+	jsonstr, jsonErr = json.Marshal(r.namespaces.Namespaces)
+	if jsonErr != nil {
+		fmt.Printf("json error: %+v\n", jsonErr)
 	}
 
-	for _, pod := range r.objectsList.pods {
-		////////////////////////////////////////////////////////////////////////
-		// send pods
-		jsonstr, jsonErr = json.Marshal(pod)
-		if jsonErr != nil {
-			fmt.Printf("json error: %+v\n", jsonErr)
-		}
-
-		//err = apiClient.SendObjects(r.Uid, jsonstr)
-		err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/pod/create", string(jsonstr), "pod")
-		if err != nil {
-			return err
-		}
+	err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/namespace/create", string(jsonstr), "namespace")
+	if err != nil {
+		log.Errorf("error: %+v\n", err)
+		return err
 	}
 
-	for _, container := range r.objectsList.containers {
-		////////////////////////////////////////////////////////////////////////
-		// send containers
-		jsonstr, jsonErr = json.Marshal(container)
-		if jsonErr != nil {
-			fmt.Printf("json error: %+v\n", jsonErr)
-		}
-
-		//err = apiClient.SendObjects(r.Uid, jsonstr)
-		err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/container/create", string(jsonstr), "container")
-		if err != nil {
-			return err
-		}
+	////////////////////////////////////////////////////////////////////////
+	// send pods
+	jsonstr, jsonErr = json.Marshal(r.objectsList.pods)
+	if jsonErr != nil {
+		fmt.Printf("json error: %+v\n", jsonErr)
 	}
 
-	for _, image := range r.objectsList.uniqueImages {
-		////////////////////////////////////////////////////////////////////////
-		// send containers
-		jsonstr, jsonErr = json.Marshal(image)
-		if jsonErr != nil {
-			fmt.Printf("json error: %+v\n", jsonErr)
-		}
-
-		//err = apiClient.SendObjects(r.Uid, jsonstr)
-		err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/image/create", string(jsonstr), "image")
-		if err != nil {
-			return err
-		}
+	err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/pod/create", string(jsonstr), "pod")
+	if err != nil {
+		log.Errorf("error: %+v\n", err)
+		return err
 	}
+
+	////////////////////////////////////////////////////////////////////////
+	// send containers
+	jsonstr, jsonErr = json.Marshal(r.objectsList.containers)
+	if jsonErr != nil {
+		fmt.Printf("json error: %+v\n", jsonErr)
+	}
+
+	err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/container/create", string(jsonstr), "container")
+	if err != nil {
+		log.Errorf("error: %+v\n", err)
+		return err
+	}
+
+	////////////////////////////////////////////////////////////////////////
+	// send containers
+	jsonstr, jsonErr = json.Marshal(r.objectsList.uniqueImages)
+	if jsonErr != nil {
+		fmt.Printf("json error: %+v\n", jsonErr)
+	}
+
+	//err = apiClient.SendObjects(r.Uid, jsonstr)
+	err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/image/create", string(jsonstr), "image")
+	if err != nil {
+		log.Errorf("error: %+v\n", err)
+		return err
+	}
+	return nil
 
 	for _, images := range r.targetslist {
 		////////////////////////////////////////////////////////////////////////
@@ -147,6 +143,7 @@ func (r *Report) Send(opt Options) error {
 			//err = apiClient.SendObjects(r.Uid, jsonstr)/api/v1/pac/report/{report_uid}/{image_uid}/vuln/create
 			err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/"+target.ImageUid+"/target/create", string(jsonstr), "target")
 			if err != nil {
+				log.Errorf("error: %+v\n", err)
 				return err
 			}
 		}
@@ -163,6 +160,7 @@ func (r *Report) Send(opt Options) error {
 		//err = apiClient.SendObjects(r.Uid, jsonstr)
 		err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/audit/create", string(jsonstr), "audit")
 		if err != nil {
+			log.Errorf("error: %+v\n", err)
 			return err
 		}
 	}
@@ -178,6 +176,7 @@ func (r *Report) Send(opt Options) error {
 		//err = apiClient.SendObjects(r.Uid, jsonstr)
 		err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/containerhasimage/create", string(jsonstr), "chi")
 		if err != nil {
+			log.Errorf("error: %+v\n", err)
 			return err
 		}
 	}

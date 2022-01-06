@@ -15,8 +15,8 @@ type Image struct {
 	Uid           string `json:"uid"`
 	ReportUid     string `json:"report_uid"`
 	Image_b64     string `json:"image_b64"`
-	AnalyzedAt    int64  `json:"analyzed_at"`
-	CreatedAt     int64  `json:"created_at"`
+	AnalyzedAt    string `json:"analyzed_at"`
+	CreatedAt     string `json:"created_at"`
 	Fulltag       string `json:"fulltag"`
 	ImageDigest   string `json:"image_digest"`
 	Arch          string `json:"arch"`
@@ -36,6 +36,8 @@ type Image struct {
 func (i *Image) Init(fulltag string) {
 	i.Uid = uuid.New().String()
 	i.Fulltag = fulltag
+	i.Config = "{}"
+	i.History = "{}"
 	log.Debugf("    image: %+s", fulltag)
 }
 
@@ -53,12 +55,15 @@ func (i *Image) Scan() ([]*Target, error) {
 	i.ImageDigest = report.Metadata.RepoDigests[0]
 	i.Distro = report.Metadata.OS.Family
 	i.DistroVersion = report.Metadata.OS.Name
-	i.CreatedAt = report.Metadata.ImageConfig.Created.Unix()
-	i.AnalyzedAt = time.Now().Unix()
-	i.Age = int(time.Now().Sub(time.Unix(i.CreatedAt, 0)).Hours() / 24)
+	i.CreatedAt = report.Metadata.ImageConfig.Created.UTC().Format(time.RFC3339)
+	i.AnalyzedAt = time.Now().UTC().Format(time.RFC3339)
+	i.Age = int(time.Now().Sub(time.Unix(report.Metadata.ImageConfig.Created.Unix(), 0)).Hours() / 24)
 	// TODO Find a way to save those informations
 	//i.Config = report.Metadata.ImageConfig.Config
 	//i.History = report.Metadata.ImageConfig.History
+	//i.Dockerfile = report.Metadata.....
+	//i.Repo = report.Metadata.RepoName
+	//i.Registry = report.Metadata.RepoName
 	targets := i.getVulnerabilities(report)
 	return targets, err
 }

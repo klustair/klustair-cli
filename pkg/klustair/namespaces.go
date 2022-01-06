@@ -2,6 +2,7 @@ package klustair
 
 import (
 	"os"
+	"time"
 
 	log "github.com/sirupsen/logrus"
 
@@ -13,7 +14,7 @@ type Namespace struct {
 	Name                     string    `json:"name"`
 	Uid                      string    `json:"uid"`
 	Kubernetes_namespace_uid types.UID `json:"kubernetes_namespace_uid"`
-	Creation_timestamp       int64     `json:"creation_timestamp"`
+	Creation_timestamp       string    `json:"creation_timestamp"`
 }
 
 type NamespaceList struct {
@@ -22,7 +23,7 @@ type NamespaceList struct {
 	Checked    int         `json:"checked"`
 }
 
-func (n *Namespace) Init(name string, kubernetes_namespace_uid types.UID, creation_timestamp int64) {
+func (n *Namespace) Init(name string, kubernetes_namespace_uid types.UID, creation_timestamp string) {
 	n.Name = name
 	n.Uid = uuid.New().String()
 	n.Kubernetes_namespace_uid = kubernetes_namespace_uid
@@ -53,7 +54,7 @@ func (ns *NamespaceList) Init(whitelist []string, blacklist []string) {
 		}
 
 		n := new(Namespace)
-		n.Init(namespace.Name, namespace.UID, namespace.CreationTimestamp.Unix())
+		n.Init(namespace.Name, namespace.UID, namespace.CreationTimestamp.UTC().Format(time.RFC3339))
 
 		// TODO remove me
 		//fmt.Printf("namespace: %+v\n", n)
