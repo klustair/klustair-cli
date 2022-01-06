@@ -32,7 +32,7 @@ func (c *ApiClient) Submit(method string, path string, data string, schema strin
 		return err
 	}
 	fmt.Printf("path: %+v\n", path)
-	fmt.Printf("sendRequest: %+v\n", data)
+	//fmt.Printf("sendRequest: %+v\n", data)
 	//return nil
 
 	//TODO make TLS verification configurable
@@ -62,16 +62,6 @@ func (c *ApiClient) Submit(method string, path string, data string, schema strin
 			log.Fatalln(err)
 		}
 		fmt.Println(string(b))
-		/*
-			var result struct {
-				Data struct {
-					ErrorInfo []interface{} `json:"errorInfo"`
-				} `json:"data"`
-			}
-
-			json.Unmarshal(b, &result)
-			log.Errorf("response: %+s\n\n", result.Data.ErrorInfo[2])
-		*/
 		var result struct {
 			Message   string `json:"message"`
 			Exception string `json:"exception"`

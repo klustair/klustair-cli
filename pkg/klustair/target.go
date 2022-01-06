@@ -7,8 +7,8 @@ type Target struct {
 	ReportUid       string           `json:"report_uid"`
 	ImageUid        string           `json:"image_uid"`
 	Target          string           `json:"Target"`
-	TargetType      string           `json:"TargetType"`
-	IsOS            bool             `json:"IsOS"`
+	TargetType      string           `json:"Type"`
+	IsOS            bool             `json:"isOS"`
 	Vulnerabilities []*Vulnerability `json:"Vulnerabilities"`
 }
 

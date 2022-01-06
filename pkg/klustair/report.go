@@ -129,25 +129,28 @@ func (r *Report) Send(opt Options) error {
 		log.Errorf("error: %+v\n", err)
 		return err
 	}
-	return nil
 
 	for _, images := range r.targetslist {
 		////////////////////////////////////////////////////////////////////////
 		// send targets
 		for _, target := range images {
-			jsonstr, jsonErr = json.Marshal(target)
+			var targetList []*Target
+			targetList = append(targetList, target)
+
+			jsonstr, jsonErr = json.Marshal(targetList)
 			if jsonErr != nil {
 				fmt.Printf("json error: %+v\n", jsonErr)
 			}
 
 			//err = apiClient.SendObjects(r.Uid, jsonstr)/api/v1/pac/report/{report_uid}/{image_uid}/vuln/create
-			err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/"+target.ImageUid+"/target/create", string(jsonstr), "target")
+			err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/"+target.ImageUid+"/vuln/create", string(jsonstr), "vuln")
 			if err != nil {
 				log.Errorf("error: %+v\n", err)
 				return err
 			}
 		}
 	}
+	return nil
 
 	for _, audit := range r.kubeauditReports {
 		////////////////////////////////////////////////////////////////////////
