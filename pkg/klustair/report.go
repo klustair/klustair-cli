@@ -134,7 +134,7 @@ func (r *Report) Send(opt Options) error {
 		////////////////////////////////////////////////////////////////////////
 		// send targets
 		for _, target := range images {
-			var targetList []*Target
+			var targetList []*Target // TODO Uggly hack to send a list of a single target
 			targetList = append(targetList, target)
 
 			jsonstr, jsonErr = json.Marshal(targetList)
@@ -150,7 +150,20 @@ func (r *Report) Send(opt Options) error {
 			}
 		}
 	}
-	return nil
+
+	////////////////////////////////////////////////////////////////////////
+	// send containers to image links
+	jsonstr, jsonErr = json.Marshal(r.containerHasImage)
+	if jsonErr != nil {
+		fmt.Printf("json error: %+v\n", jsonErr)
+	}
+
+	//err = apiClient.SendObjects(r.Uid, jsonstr)
+	err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/containerhasimage/create", string(jsonstr), "chi")
+	if err != nil {
+		log.Errorf("error: %+v\n", err)
+		return err
+	}
 
 	for _, audit := range r.kubeauditReports {
 		////////////////////////////////////////////////////////////////////////
@@ -162,22 +175,6 @@ func (r *Report) Send(opt Options) error {
 
 		//err = apiClient.SendObjects(r.Uid, jsonstr)
 		err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/audit/create", string(jsonstr), "audit")
-		if err != nil {
-			log.Errorf("error: %+v\n", err)
-			return err
-		}
-	}
-
-	for _, chi := range r.containerHasImage {
-		////////////////////////////////////////////////////////////////////////
-		// send containers to image links
-		jsonstr, jsonErr = json.Marshal(chi)
-		if jsonErr != nil {
-			fmt.Printf("json error: %+v\n", jsonErr)
-		}
-
-		//err = apiClient.SendObjects(r.Uid, jsonstr)
-		err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/containerhasimage/create", string(jsonstr), "chi")
 		if err != nil {
 			log.Errorf("error: %+v\n", err)
 			return err

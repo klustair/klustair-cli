@@ -78,7 +78,7 @@ type KubeauditReport struct {
 	NamespaceUid       string `json:"namespace_uid"`
 	AuditTime          string `json:"time"`
 	AuditType          string `json:"audit_type"`
-	AuditName          string `json:"AuditName"`
+	AuditName          string `json:"AuditResultName"`
 	Message            string `json:"msg"`
 	SeverityLevel      string `json:"level"`
 	Capability         string `json:"Capability"`
@@ -117,7 +117,7 @@ func (a *Auditor) getReport() []KubeauditReport {
 				//NamespaceUid:  a.Report.Namespace,
 				AuditName:          o.Name,
 				Message:            o.Message,
-				AuditTime:          time.Now().Local().String(),
+				AuditTime:          time.Now().UTC().Format(time.RFC3339),
 				SeverityLevel:      o.Severity.String(),
 				AuditType:          "unknown",
 				ResourceName:       resourceName,

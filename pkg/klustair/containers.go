@@ -2,7 +2,6 @@ package klustair
 
 import (
 	"encoding/json"
-	"fmt"
 
 	"github.com/google/uuid"
 	log "github.com/sirupsen/logrus"
@@ -59,6 +58,5 @@ func (c *Container) Init(reportUid string, namespaceUid string, podUid string, c
 			c.Actual = true
 		}
 	}
-	fmt.Printf("container.Init: %v\n", c)
 	log.Debugf("  container: %+s, ready: %+v", c.Name, c.Ready)
 }
