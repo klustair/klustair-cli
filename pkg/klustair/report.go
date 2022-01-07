@@ -36,9 +36,16 @@ func (r *Report) Init(label string, whitelist []string, blacklist []string, triv
 	// run kubeaudit scans if enabled
 	if len(kubeauditAuditors) > 0 && kubeauditAuditors[0] != "" {
 		k := new(kubeaudit.Auditor)
-		nsList := r.namespaces.GetNamespaces()
+		k.Klustair.ReportUid = r.Uid
 		k.SetConfig(kubeauditAuditors)
-		r.kubeauditReports = k.Run(nsList)
+
+		for _, namespace := range r.namespaces.Namespaces {
+			log.Debugf("Kubeaudit on namespace: %+v", namespace.Name)
+			report := k.Audit(namespace.Name)
+			k.Klustair.NamespaceUid = namespace.Uid
+
+			r.kubeauditReports = append(r.kubeauditReports, report)
+		}
 	}
 
 	// run trivy scans if enabled

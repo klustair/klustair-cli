@@ -18,6 +18,10 @@ import (
 type Auditor struct {
 	KubeauditConfig kubeauditconfig.KubeauditConfig
 	Report          kubeaudit.Report
+	Klustair        struct {
+		ReportUid    string `json:"report_uid"`
+		NamespaceUid string `json:"namespace_uid"`
+	}
 }
 
 func (a *Auditor) SetConfig(auditors []string) kubeauditconfig.KubeauditConfig {
@@ -29,16 +33,6 @@ func (a *Auditor) SetConfig(auditors []string) kubeauditconfig.KubeauditConfig {
 	a.KubeauditConfig.EnabledAuditors = auditoorsmap
 
 	return a.KubeauditConfig
-}
-
-func (a *Auditor) Run(namespaces []string) [][]KubeauditReport {
-	var reports [][]KubeauditReport // List of namespaces and a list of reports
-	for _, namespace := range namespaces {
-		log.Debugf("Kubeaudit on namespace: %+v", namespace)
-		report := a.Audit(namespace)
-		reports = append(reports, report)
-	}
-	return reports
 }
 
 func (a *Auditor) Audit(namespace string) []KubeauditReport {
@@ -103,23 +97,17 @@ func (a *Auditor) getReport() []KubeauditReport {
 		resourceName := objectMeta.GetName()
 		resourceNamespace := objectMeta.GetNamespace()
 
-		/*
-			fmt.Printf("objectGroup: %v\n", objectGroup)
-			fmt.Printf("objectKind: %v\n", objectKind)
-		*/
-
 		for _, o := range r.GetAuditResults() {
 
 			k := KubeauditReport{
-				Uid: uuid.New().String(),
-				//TODO those fields are mandatory !!
-				//ReportUid:     a.Report.Uid,
-				//NamespaceUid:  a.Report.Namespace,
+				Uid:                uuid.New().String(),
+				ReportUid:          a.Klustair.ReportUid,
+				NamespaceUid:       a.Klustair.NamespaceUid,
 				AuditName:          o.Name,
 				Message:            o.Message,
 				AuditTime:          time.Now().UTC().Format(time.RFC3339),
 				SeverityLevel:      o.Severity.String(),
-				AuditType:          "unknown",
+				AuditType:          "unknown", //initial value
 				ResourceName:       resourceName,
 				ResourceNamespace:  resourceNamespace,
 				ResourceApiVersion: resourceApiVersion,
