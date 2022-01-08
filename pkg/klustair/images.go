@@ -1,6 +1,7 @@
 package klustair
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/aquasecurity/trivy/pkg/report"
@@ -31,6 +32,7 @@ type Image struct {
 	History       string `json:"history"`
 	Age           int    `json:"age"`
 	Targets       []*Target
+	summary       VulnSummary
 }
 
 func (i *Image) Init(fulltag string) {
@@ -90,10 +92,15 @@ func (i *Image) getVulnerabilities(report report.Report) []*Target {
 			// TODO fill with cvss
 			//v.CVSS = vuln.CVSS
 			v.CweIDs = vuln.CweIDs
+
+			// Increment summary
+			i.summary.Add(v)
+
 			t.Vulnerabilities = append(t.Vulnerabilities, v)
 		}
 		//i.Targets = append(i.Targets, t)
 		targets = append(targets, t)
 	}
+	fmt.Printf("summary    %+v\n", i.summary)
 	return targets
 }

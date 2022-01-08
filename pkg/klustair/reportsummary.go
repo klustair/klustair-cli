@@ -1,6 +1,8 @@
 package klustair
 
-import "github.com/google/uuid"
+import (
+	"github.com/google/uuid"
+)
 
 type ReportSummary struct {
 	uid                string
@@ -34,6 +36,18 @@ func (rs *ReportSummary) Init() {
 	rs.pods = 0
 	rs.containers = 0
 	rs.images = 0
+}
+
+func (rs *ReportSummary) sumVulnSummary(uniqueImages map[string]*Image) {
+	for _, image := range uniqueImages {
+		rs.vuln_total += image.summary.total
+		rs.vuln_high += image.summary.high
+		rs.vuln_critical += image.summary.critical
+		rs.vuln_medium += image.summary.medium
+		rs.vuln_low += image.summary.low
+		rs.vuln_unknown += image.summary.unknown
+		rs.vuln_fixed += image.summary.fixed
+	}
 }
 
 func NewReportSummary() *ReportSummary {

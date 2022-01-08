@@ -33,6 +33,15 @@ func (r *Report) Init(label string, whitelist []string, blacklist []string, triv
 	o.Init(r.Uid, r.namespaces)
 	r.objectsList = o
 
+	// recate a report summary
+	rs := new(ReportSummary)
+	rs.Init()
+	rs.namespaces_total = ns.Total
+	rs.namespaces_checked = ns.Checked
+	rs.pods = len(o.pods)
+	rs.containers = len(o.containers)
+	rs.images = len(o.uniqueImages)
+
 	// run kubeaudit scans if enabled
 	if len(kubeauditAuditors) > 0 && kubeauditAuditors[0] != "" {
 		k := new(kubeaudit.Auditor)
@@ -51,14 +60,14 @@ func (r *Report) Init(label string, whitelist []string, blacklist []string, triv
 	// run trivy scans if enabled
 	if trivy {
 		r.targetslist = o.ScanImages()
+		rs.sumVulnSummary(r.objectsList.uniqueImages)
 	}
 
 	r.containerHasImage = o.linkImagesToContainers(trivy)
 
-	rs := new(ReportSummary)
-	rs.Init()
-	rs.namespaces_total = ns.Total
 	r.reportSummary = rs
+
+	log.Debugf("REPORT SUMMARY: %+v\n", r.reportSummary)
 }
 
 func NewReport(opt Options) *Report {
