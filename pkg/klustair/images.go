@@ -31,8 +31,8 @@ type Image struct {
 	Config        string `json:"config"`
 	History       string `json:"history"`
 	Age           int    `json:"age"`
-	Targets       []*Target
-	Summary       VulnSummary `json:"summary"`
+	//Targets       []*Target
+	Summary VulnSummary `json:"summary"`
 }
 
 func (i *Image) Init(fulltag string) {

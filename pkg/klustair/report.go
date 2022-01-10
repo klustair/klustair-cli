@@ -211,6 +211,26 @@ func (r *Report) Send(opt Options) error {
 		return err
 	}
 
+	if opt.LimitDate > 0 || opt.LimitNr > 0 {
+		var cleanup struct {
+			LimitNr   int `json:"limit_nr"`
+			LimitDate int `json:"limit_date"`
+		}
+		cleanup.LimitDate = opt.LimitDate
+		cleanup.LimitNr = opt.LimitNr
+
+		jsonstr, jsonErr = json.Marshal(cleanup)
+		if jsonErr != nil {
+			fmt.Printf("json error: %+v\n", jsonErr)
+		}
+
+		err = apiClient.Submit("POST", "/api/v1/pac/report/cleanup", string(jsonstr), "cleanup")
+		if err != nil {
+			log.Errorf("error: %+v\n", err)
+			return err
+		}
+	}
+
 	return nil
 
 }
