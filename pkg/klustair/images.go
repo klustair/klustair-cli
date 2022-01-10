@@ -74,6 +74,8 @@ func (i *Image) getVulnerabilities(report report.Report) []*Target {
 	var targets []*Target
 	for _, target := range report.Results {
 		t := NewTarget(i.ReportUid, i.Uid)
+		t.Target = target.Target
+		t.TargetType = target.Type
 		for _, vuln := range target.Vulnerabilities {
 			//TODO delete me
 			//fmt.Printf("CVSS:%+v\n", vuln.CVSS)
