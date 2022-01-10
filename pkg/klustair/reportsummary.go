@@ -5,48 +5,49 @@ import (
 )
 
 type ReportSummary struct {
-	uid                string
-	namespaces_total   int
-	namespaces_checked int
-	vuln_total         int
-	vuln_high          int
-	vuln_critical      int
-	vuln_medium        int
-	vuln_low           int
-	vuln_unknown       int
-	vuln_negligible    int
-	vuln_fixed         int
-	pods               int
-	containers         int
-	images             int
+	uid               string
+	NamespacesTotal   int `json:"namespaces_total"`
+	NamespacesChecked int `json:"namespaces_checked"`
+	VulnTotal         int `json:"vuln_total"`
+	VulnHigh          int `json:"vuln_high"`
+	VulnCritical      int `json:"vuln_critical"`
+	VulnMedium        int `json:"vuln_medium"`
+	VulnLow           int `json:"vuln_low"`
+	VulnUnknown       int `json:"vuln_unknown"`
+	VulnNegligible    int `json:"vuln_negligible"`
+	VulnFixed         int `json:"vuln_fixed"`
+	Pods              int `json:"pods"`
+	Containers        int `json:"containers"`
+	Images            int `json:"images"`
 }
 
 func (rs *ReportSummary) Init() {
 	rs.uid = uuid.New().String()
-	rs.namespaces_total = 0
-	rs.namespaces_checked = 0
-	rs.vuln_total = 0
-	rs.vuln_high = 0
-	rs.vuln_critical = 0
-	rs.vuln_medium = 0
-	rs.vuln_low = 0
-	rs.vuln_unknown = 0
-	rs.vuln_negligible = 0
-	rs.vuln_fixed = 0
-	rs.pods = 0
-	rs.containers = 0
-	rs.images = 0
+	rs.NamespacesTotal = 0
+	rs.NamespacesChecked = 0
+	rs.VulnTotal = 0
+	rs.VulnFixed = 0
+	rs.VulnCritical = 0
+	rs.VulnHigh = 0
+	rs.VulnMedium = 0
+	rs.VulnLow = 0
+	rs.VulnUnknown = 0
+	rs.VulnNegligible = 0
+	rs.Pods = 0
+	rs.Containers = 0
+	rs.Images = 0
 }
 
 func (rs *ReportSummary) sumVulnSummary(uniqueImages map[string]*Image) {
 	for _, image := range uniqueImages {
-		rs.vuln_total += image.summary.total
-		rs.vuln_high += image.summary.high
-		rs.vuln_critical += image.summary.critical
-		rs.vuln_medium += image.summary.medium
-		rs.vuln_low += image.summary.low
-		rs.vuln_unknown += image.summary.unknown
-		rs.vuln_fixed += image.summary.fixed
+		s := image.Summary
+		rs.VulnTotal += s.Total
+		rs.VulnFixed += s.Fixed
+		rs.VulnCritical += s.Severity.Critical.Total
+		rs.VulnHigh += s.Severity.High.Total
+		rs.VulnMedium += s.Severity.Medium.Total
+		rs.VulnLow += s.Severity.Low.Total
+		rs.VulnUnknown += s.Severity.Unknown.Total
 	}
 }
 

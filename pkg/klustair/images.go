@@ -32,7 +32,7 @@ type Image struct {
 	History       string `json:"history"`
 	Age           int    `json:"age"`
 	Targets       []*Target
-	summary       VulnSummary
+	Summary       VulnSummary `json:"summary"`
 }
 
 func (i *Image) Init(fulltag string) {
@@ -94,13 +94,13 @@ func (i *Image) getVulnerabilities(report report.Report) []*Target {
 			v.CweIDs = vuln.CweIDs
 
 			// Increment summary
-			i.summary.Add(v)
+			i.Summary.Add(v)
 
 			t.Vulnerabilities = append(t.Vulnerabilities, v)
 		}
 		//i.Targets = append(i.Targets, t)
 		targets = append(targets, t)
 	}
-	fmt.Printf("summary    %+v\n", i.summary)
+	fmt.Printf("summary    %+v\n", i.Summary)
 	return targets
 }

@@ -36,11 +36,11 @@ func (r *Report) Init(label string, whitelist []string, blacklist []string, triv
 	// recate a report summary
 	rs := new(ReportSummary)
 	rs.Init()
-	rs.namespaces_total = ns.Total
-	rs.namespaces_checked = ns.Checked
-	rs.pods = len(o.pods)
-	rs.containers = len(o.containers)
-	rs.images = len(o.uniqueImages)
+	rs.NamespacesTotal = ns.Total
+	rs.NamespacesChecked = ns.Checked
+	rs.Pods = len(o.pods)
+	rs.Containers = len(o.containers)
+	rs.Images = len(o.uniqueImages)
 
 	// run kubeaudit scans if enabled
 	if len(kubeauditAuditors) > 0 && kubeauditAuditors[0] != "" {
@@ -196,6 +196,21 @@ func (r *Report) Send(opt Options) error {
 			return err
 		}
 	}
+
+	////////////////////////////////////////////////////////////////////////
+	// send containers to image links
+	jsonstr, jsonErr = json.Marshal(r.reportSummary)
+	if jsonErr != nil {
+		fmt.Printf("json error: %+v\n", jsonErr)
+	}
+
+	//err = apiClient.SendObjects(r.Uid, jsonstr)
+	err = apiClient.Submit("POST", "/api/v1/pac/report/"+r.Uid+"/summary/create", string(jsonstr), "reportsummary")
+	if err != nil {
+		log.Errorf("error: %+v\n", err)
+		return err
+	}
+
 	return nil
 
 }

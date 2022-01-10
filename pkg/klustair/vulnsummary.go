@@ -12,31 +12,53 @@ type ImageSummary struct {
 */
 
 type VulnSummary struct {
-	total    int
-	fixed    int
-	critical int
-	high     int
-	medium   int
-	low      int
-	unknown  int
+	Total    int `json:"Total"`
+	Fixed    int `json:"Fixed"`
+	Severity struct {
+		Critical Severity `json:"Critical"`
+		High     Severity `json:"High"`
+		Medium   Severity `json:"Medium"`
+		Low      Severity `json:"Low"`
+		Unknown  Severity `json:"Unknown"`
+	} `json:"severity"`
+}
+
+type Severity struct {
+	Total int `json:"total"`
+	Fixed int `json:"fixed"`
 }
 
 func (v *VulnSummary) Add(vulnerability *Vulnerability) {
-	v.total++
-	switch vulnerability.Severity {
-	case SeverityCritical:
-		v.critical++
-	case SeverityHigh:
-		v.high++
-	case SeverityMedium:
-		v.medium++
-	case SeverityLow:
-		v.low++
-	case SeverityUnknown:
-		v.unknown++
+	v.Total++
+	if vulnerability.FixedVersion != "" {
+		v.Fixed++
 	}
 
-	if vulnerability.FixedVersion != "" {
-		v.fixed++
+	switch vulnerability.Severity {
+	case SeverityCritical:
+		v.Severity.Critical.Total++
+		if vulnerability.FixedVersion != "" {
+			v.Severity.Critical.Fixed++
+		}
+	case SeverityHigh:
+		v.Severity.High.Total++
+		if vulnerability.FixedVersion != "" {
+			v.Severity.High.Fixed++
+		}
+	case SeverityMedium:
+		v.Severity.Medium.Total++
+		if vulnerability.FixedVersion != "" {
+			v.Severity.Medium.Fixed++
+		}
+	case SeverityLow:
+		v.Severity.Low.Total++
+		if vulnerability.FixedVersion != "" {
+			v.Severity.Low.Fixed++
+		}
+	case SeverityUnknown:
+		v.Severity.Unknown.Total++
+		if vulnerability.FixedVersion != "" {
+			v.Severity.Unknown.Fixed++
+		}
 	}
 }
