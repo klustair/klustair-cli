@@ -60,6 +60,7 @@ func (r *Report) Init(label string, whitelist []string, blacklist []string, triv
 	// run trivy scans if enabled
 	if trivy {
 		r.targetslist = o.ScanImages()
+		//os.Exit(0)
 		rs.sumVulnSummary(r.objectsList.uniqueImages)
 	}
 

@@ -56,8 +56,6 @@ func (ns *NamespaceList) Init(whitelist []string, blacklist []string) {
 		n := new(Namespace)
 		n.Init(namespace.Name, namespace.UID, namespace.CreationTimestamp.UTC().Format(time.RFC3339))
 
-		// TODO remove me
-		//fmt.Printf("namespace: %+v\n", n)
 		log.Debug("namespace:", n.Name)
 		ns.Namespaces = append(ns.Namespaces, *n)
 	}

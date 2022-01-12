@@ -26,6 +26,5 @@ func (p *Pod) Init(reportUid string, namespaceUid string, pod v1.Pod) {
 	p.Kubernetes_pod_uid = pod.UID
 	p.Creation_timestamp = pod.CreationTimestamp.UTC().Format(time.RFC3339)
 
-	// TODO calculate age
-	p.Age = 0
+	p.Age = int(time.Since(time.Unix(pod.CreationTimestamp.Unix(), 0)).Hours() / 24)
 }

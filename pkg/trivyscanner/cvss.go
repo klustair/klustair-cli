@@ -126,10 +126,10 @@ func NewCVSS(CVSS types.VendorCVSS) *Cvss {
 		}
 		cvss := new(Cvss)
 		cvss.empty("vendor:" + vendor)
-		log.Debugf("Failed to parse CVSS vector from %s: %v", v, vendor)
+		//log.Debugf("Failed to parse CVSS vector from %s: %v", v, vendor)
 		return cvss
 	}
-	log.Debugf("Failed to parse CVSS vector %v", CVSS)
+	//log.Debugf("Failed to parse CVSS vector %v", CVSS)
 
 	cvss := new(Cvss)
 	cvss.empty("empty")

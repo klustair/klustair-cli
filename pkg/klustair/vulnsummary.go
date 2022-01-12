@@ -1,16 +1,5 @@
 package klustair
 
-/*
-type ImageSummary struct {
-	Uid       string `json:"uid"`
-	ReportUid string `json:"report_uid"`
-	ImageUid  string `json:"image_uid"`
-	Severity  string `json:"severity"`
-	Total     int    `json:"total"`
-	Fixed     int    `json:"fixed"`
-}
-*/
-
 type VulnSummary struct {
 	Total    int `json:"Total"`
 	Fixed    int `json:"Fixed"`

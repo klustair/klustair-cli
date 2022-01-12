@@ -30,8 +30,6 @@ func (ol *ObjectsList) Init(reportUid string, namespaces *NamespaceList) {
 			p := new(Pod)
 			p.Init(reportUid, namespace.Uid, pod)
 
-			// TODO remove me
-			//fmt.Printf("pod: %+v\n", p)
 			log.Debug("pod:", p.Podname)
 			ol.pods = append(ol.pods, p)
 
@@ -67,7 +65,7 @@ func (ol *ObjectsList) ScanImages() Targetslist {
 	//var unique map[]images
 	trivyReports := make(Targetslist)
 	for _, image := range ol.uniqueImages {
-		log.Debug("Trivy scan image fulltag:", image.Fulltag)
+		log.Info("Trivy scan image fulltag:", image.Fulltag)
 		targets, err := image.Scan()
 		if err != nil {
 			log.Errorf("error scanning image: %s", err)
