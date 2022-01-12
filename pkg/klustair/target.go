@@ -10,7 +10,7 @@ type Target struct {
 	TargetType      string           `json:"Type"`
 	IsOS            bool             `json:"isOS"`
 	Vulnerabilities []*Vulnerability `json:"Vulnerabilities"`
-	summary         VulnSummary
+	//summary         VulnSummary
 }
 
 func NewTarget(reportUid string, imageUid string) *Target {

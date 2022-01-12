@@ -26,9 +26,10 @@ type Container struct {
 	Actual            bool   `json:"actual"`
 }
 
-type ContainersList struct {
+/*type ContainersList struct {
 	containers []Container
 }
+*/
 
 func (c *Container) Init(reportUid string, namespaceUid string, podUid string, container v1.Container, containerstatus []v1.ContainerStatus, init_container bool) {
 

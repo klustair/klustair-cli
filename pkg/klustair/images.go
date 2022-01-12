@@ -1,6 +1,7 @@
 package klustair
 
 import (
+	"encoding/json"
 	"fmt"
 	"time"
 
@@ -13,26 +14,25 @@ import (
 var Trivy *trivyscanner.Trivy
 
 type Image struct {
-	Uid           string `json:"uid"`
-	ReportUid     string `json:"report_uid"`
-	Image_b64     string `json:"image_b64"`
-	AnalyzedAt    string `json:"analyzed_at"`
-	CreatedAt     string `json:"created_at"`
-	Fulltag       string `json:"fulltag"`
-	ImageDigest   string `json:"image_digest"`
-	Arch          string `json:"arch"`
-	Distro        string `json:"distro"`
-	DistroVersion string `json:"distro_version"`
-	ImageSize     int    `json:"image_size"`
-	LayerCount    int    `json:"layer_count"`
-	Registry      string `json:"registry"`
-	Repo          string `json:"repo"`
-	Dockerfile    string `json:"dockerfile"`
-	Config        string `json:"config"`
-	History       string `json:"history"`
-	Age           int    `json:"age"`
-	//Targets       []*Target
-	Summary VulnSummary `json:"summary"`
+	Uid           string      `json:"uid"`
+	ReportUid     string      `json:"report_uid"`
+	Image_b64     string      `json:"image_b64"`
+	AnalyzedAt    string      `json:"analyzed_at"`
+	CreatedAt     string      `json:"created_at"`
+	Fulltag       string      `json:"fulltag"`
+	ImageDigest   string      `json:"image_digest"`
+	Arch          string      `json:"arch"`
+	Distro        string      `json:"distro"`
+	DistroVersion string      `json:"distro_version"`
+	ImageSize     int         `json:"image_size"`
+	LayerCount    int         `json:"layer_count"`
+	Registry      string      `json:"registry"`
+	Repo          string      `json:"repo"`
+	Dockerfile    string      `json:"dockerfile"`
+	Config        string      `json:"config"`
+	History       string      `json:"history"`
+	Age           int         `json:"age"`
+	Summary       VulnSummary `json:"summary"`
 }
 
 func (i *Image) Init(fulltag string) {
@@ -59,7 +59,7 @@ func (i *Image) Scan() ([]*Target, error) {
 	i.DistroVersion = report.Metadata.OS.Name
 	i.CreatedAt = report.Metadata.ImageConfig.Created.UTC().Format(time.RFC3339)
 	i.AnalyzedAt = time.Now().UTC().Format(time.RFC3339)
-	i.Age = int(time.Now().Sub(time.Unix(report.Metadata.ImageConfig.Created.Unix(), 0)).Hours() / 24)
+	i.Age = int(time.Since(time.Unix(report.Metadata.ImageConfig.Created.Unix(), 0)).Hours() / 24)
 	// TODO Find a way to save those informations
 	//i.Config = report.Metadata.ImageConfig.Config
 	//i.History = report.Metadata.ImageConfig.History
@@ -88,11 +88,13 @@ func (i *Image) getVulnerabilities(report report.Report) []*Target {
 			v.FixedVersion = vuln.FixedVersion
 			v.SeveritySource = vuln.SeveritySource
 			v.Severity = vuln.Severity
+			v.SeverityToInt(vuln.Severity)
 			v.LastModifiedDate = vuln.LastModifiedDate
 			v.PublishedDate = vuln.PublishedDate
 			v.References = vuln.References
 			// TODO fill with cvss
-			//v.CVSS = vuln.CVSS
+			v.RawCVSS, _ = json.Marshal(vuln.CVSS)
+			v.CVSS = *trivyscanner.NewCVSS(vuln.CVSS)
 			v.CweIDs = vuln.CweIDs
 
 			// Increment summary

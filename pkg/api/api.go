@@ -3,7 +3,6 @@ package api
 import (
 	"crypto/tls"
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"strings"
@@ -28,10 +27,10 @@ func (c *ApiClient) Submit(method string, path string, data string, schema strin
 
 	err := c.validate(data, schema)
 	if err != nil {
-		fmt.Println("Error validating json: ", err, schema)
+		log.Errorln("Error validating json: ", err, schema)
 		return err
 	}
-	fmt.Printf("path: %+v\n", path)
+	log.Debugf("path: %+v\n", path)
 	//fmt.Printf("sendRequest: %+v\n", data)
 	//return nil
 
@@ -61,7 +60,7 @@ func (c *ApiClient) Submit(method string, path string, data string, schema strin
 		if err != nil {
 			log.Fatalln(err)
 		}
-		fmt.Println(string(b))
+		log.Println(string(b))
 		var result struct {
 			Message   string `json:"message"`
 			Exception string `json:"exception"`
@@ -88,12 +87,13 @@ func (c *ApiClient) validate(json string, schema string) error {
 
 	sma, err := vjson.ReadFromFile("./pkg/api/schema/" + schema + ".json")
 	if err != nil {
-		fmt.Println("Error reading schema: ", err)
+		log.Error("Error reading schema: ", err)
 		return err
 	}
 
 	err = sma.ValidateString(json)
 	if err != nil {
+		log.Error("Error validating json: ", json)
 		return err
 	}
 	return nil
