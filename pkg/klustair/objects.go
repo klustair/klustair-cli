@@ -65,7 +65,7 @@ func (ol *ObjectsList) ScanImages() Targetslist {
 	//var unique map[]images
 	trivyReports := make(Targetslist)
 	for _, image := range ol.uniqueImages {
-		log.Info("Trivy scan image fulltag:", image.Fulltag)
+		log.Info("Trivy scan image:", image.Fulltag)
 		targets, err := image.Scan()
 		if err != nil {
 			log.Errorf("error scanning image: %s", err)

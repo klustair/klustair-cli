@@ -49,7 +49,7 @@ func (r *Report) Init(label string, whitelist []string, blacklist []string, triv
 		k.SetConfig(kubeauditAuditors)
 
 		for _, namespace := range r.namespaces.Namespaces {
-			log.Debugf("Kubeaudit on namespace: %+v", namespace.Name)
+			log.Infof("Kubeaudit on namespace: %+v", namespace.Name)
 			report := k.Audit(namespace.Name)
 			k.Klustair.NamespaceUid = namespace.Uid
 

@@ -6,16 +6,17 @@ require (
 	github.com/Shopify/kubeaudit v0.14.3-0.20211125152147-d3ec331b7df9
 	github.com/aquasecurity/trivy v0.22.0
 	github.com/aquasecurity/trivy-db v0.0.0-20211222120943-2b609a291dbb
+	github.com/google/go-containerregistry v0.6.0
 	github.com/google/uuid v1.3.0
 	github.com/klustair/cvssv3 v0.0.0-20220111135141-c39f8571cafd
 	github.com/klustair/trivy v0.22.1-0.20211228084627-1aed6e6950a5
 	github.com/miladibra10/vjson v0.2.1
 	github.com/sirupsen/logrus v1.8.1
+	github.com/umisama/go-cvss v0.0.0-20150430082624-a4ad666ead9b
 	github.com/urfave/cli/v2 v2.3.0
 	k8s.io/api v0.23.1
 	k8s.io/apimachinery v0.23.1
 	k8s.io/client-go v0.22.4
-	github.com/umisama/go-cvss v0.0.0-20150430082624-a4ad666ead9b
 )
 
 require (
@@ -84,7 +85,6 @@ require (
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.2 // indirect
 	github.com/google/go-cmp v0.5.6 // indirect
-	github.com/google/go-containerregistry v0.6.0 // indirect
 	github.com/google/go-github/v33 v33.0.0 // indirect
 	github.com/google/go-querystring v1.1.0 // indirect
 	github.com/google/gofuzz v1.2.0 // indirect

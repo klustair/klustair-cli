@@ -1,6 +1,7 @@
 package klustair
 
 import (
+	"fmt"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -62,8 +63,8 @@ func Run(opt Options) error {
 	if opt.Apihost != "" && opt.Apitoken != "" {
 		Report.Send(opt)
 	}
+	fmt.Println("\033[1;32m#### Report sucessful ####\033[0m")
 	return nil
-	//return xerrors.Errorf("option error: %w", "nothing to do")
 }
 
 func loadOpts(ctx *cli.Context) (Options, error) {

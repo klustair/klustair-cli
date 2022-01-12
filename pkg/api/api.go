@@ -30,7 +30,6 @@ func (c *ApiClient) Submit(method string, path string, data string, schema strin
 		log.Errorln("Error validating json: ", err, schema)
 		return err
 	}
-	log.Debugf("path: %+v\n", path)
 	//fmt.Printf("sendRequest: %+v\n", data)
 	//return nil
 
@@ -54,7 +53,8 @@ func (c *ApiClient) Submit(method string, path string, data string, schema strin
 	}
 	defer resp.Body.Close()
 
-	if resp.StatusCode > 201 {
+	if resp.StatusCode > 299 {
+		log.Debugf("path: %s ERROR %+v\n", path, resp.StatusCode)
 		log.Debugf("response: %+v\n", resp)
 		b, err := io.ReadAll(resp.Body)
 		if err != nil {
@@ -78,6 +78,8 @@ func (c *ApiClient) Submit(method string, path string, data string, schema strin
 		json.Unmarshal(b, &result)
 		log.Errorf("response: %+s\n\n", result.Message)
 		log.Panic("Error submitting to API: ", resp.Status)
+	} else {
+		log.Debugf("path: %s OK %+v\n", path, resp.StatusCode)
 	}
 
 	return nil
