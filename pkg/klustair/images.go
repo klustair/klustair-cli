@@ -53,8 +53,10 @@ func (i *Image) Scan() ([]*Target, error) {
 	i.Arch = report.Metadata.ImageConfig.Architecture
 	i.LayerCount = len(report.Metadata.ImageConfig.RootFS.DiffIDs)
 	i.ImageDigest = report.Metadata.RepoDigests[0]
-	i.Distro = report.Metadata.OS.Family
-	i.DistroVersion = report.Metadata.OS.Name
+	if report.Metadata.OS != nil {
+		i.Distro = report.Metadata.OS.Family
+		i.DistroVersion = report.Metadata.OS.Name
+	}
 	i.CreatedAt = report.Metadata.ImageConfig.Created.UTC().Format(time.RFC3339)
 	i.AnalyzedAt = time.Now().UTC().Format(time.RFC3339)
 	i.Age = int(time.Since(time.Unix(report.Metadata.ImageConfig.Created.Unix(), 0)).Hours() / 24)
