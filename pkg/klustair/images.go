@@ -56,6 +56,9 @@ func (i *Image) Scan() ([]*Target, error) {
 	if report.Metadata.OS != nil {
 		i.Distro = report.Metadata.OS.Family
 		i.DistroVersion = report.Metadata.OS.Name
+	} else {
+		i.Distro = "unknown"
+		i.DistroVersion = "unknown"
 	}
 	i.CreatedAt = report.Metadata.ImageConfig.Created.UTC().Format(time.RFC3339)
 	i.AnalyzedAt = time.Now().UTC().Format(time.RFC3339)
