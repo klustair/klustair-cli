@@ -63,7 +63,8 @@ func Run(opt Options) error {
 	if opt.Apihost != "" && opt.Apitoken != "" {
 		Report.Send(opt)
 	}
-	fmt.Println("\033[1;32m#### Report sucessful ####\033[0m")
+	Report.Print()
+	fmt.Println("\033[1;32m#### Done ####\033[0m")
 	return nil
 }
 
