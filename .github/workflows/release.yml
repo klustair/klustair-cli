@@ -1,8 +1,14 @@
 name: goreleaser
 
 on:
-  pull_request:
   push:
+    branches:
+      - master
+
+    # Publish `v1.2.3` tags as releases.
+    tags:
+      - v*
+  workflow_dispatch:
 
 jobs:
   goreleaser:

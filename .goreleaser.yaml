@@ -7,12 +7,12 @@ before:
 builds:
   - 
     main: cmd/klustair/main.go
-    binary: klustair
+    binary: klustair-cli
     env:
       - CGO_ENABLED=0
     goos:
-      - linux
-      - windows
+      #- linux
+      #- windows
       - darwin
 archives:
   - replacements:
