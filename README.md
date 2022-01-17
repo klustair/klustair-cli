@@ -33,6 +33,8 @@ optional arguments:
    --version, -v                          print the version (default: false)
 ```
 
+![klustair cli output](docs/img/klustair-cli-screenshot.png)
+
 ## ENV vars (not set by commandline)
 ```
 export TRIVY_USERNAME=....
