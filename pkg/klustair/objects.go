@@ -1,8 +1,6 @@
 package klustair
 
 import (
-	"os"
-
 	log "github.com/sirupsen/logrus"
 )
 
@@ -21,8 +19,8 @@ func (ol *ObjectsList) Init(reportUid string, namespaces *NamespaceList) {
 
 		podsList, err := Client.GetPods(namespace.Name)
 		if err != nil {
-			log.Fatal(err)
-			os.Exit(1)
+			log.Error(err)
+			continue
 		}
 
 		for _, pod := range podsList.Items {

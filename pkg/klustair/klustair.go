@@ -1,7 +1,6 @@
 package klustair
 
 import (
-	"fmt"
 	"strings"
 
 	log "github.com/sirupsen/logrus"
@@ -63,15 +62,22 @@ func Run(opt Options) error {
 	if opt.Apihost != "" && opt.Apitoken != "" {
 		Report.Send(opt)
 	}
-	Report.Print()
-	fmt.Println("\033[1;32m#### Done ####\033[0m")
+	Report.Print(opt.Trivy, opt.KubeAudit)
 	return nil
 }
 
 func loadOpts(ctx *cli.Context) (Options, error) {
+	var nsWhitelist []string
+	if ctx.String("namespaces") != "" {
+		nsWhitelist = strings.Split(ctx.String("namespaces"), ",")
+	}
+	var nsBlacklist []string
+	if ctx.String("namespacesblacklist") != "" {
+		nsBlacklist = strings.Split(ctx.String("namespacesblacklist"), ",")
+	}
 	opt := Options{
-		Namespaces:           strings.Split(ctx.String("namespaces"), ","),
-		NamespacesBlacklist:  strings.Split(ctx.String("namespacesblacklist"), ","),
+		Namespaces:           nsWhitelist,
+		NamespacesBlacklist:  nsBlacklist,
 		KubeAudit:            strings.Split(ctx.String("kubeaudit"), ","),
 		Trivy:                ctx.Bool("trivy"),
 		Label:                ctx.String("label"),

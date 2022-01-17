@@ -236,7 +236,7 @@ func (r *Report) Send(opt Options) error {
 
 }
 
-func (r *Report) Print() {
+func (r *Report) Print(trivy bool, kubeaudit []string) {
 
 	color := map[string]string{
 		"reset":        "\033[0m",
@@ -280,32 +280,57 @@ func (r *Report) Print() {
 		"bl":   "\033[5m",
 		"rev":  "\033[7m",
 		"hid":  "\033[8m",
+
+		"error":   "\033[31m",
+		"warning": "\033[33m",
+		"info":    "\033[36m",
 	}
 
 	//fmt.Printf("Report %s\n", r.Uid)
-	fmt.Printf("%sReport ===========================================%s\n", color["bold"], color["reset"])
+	fmt.Printf("%sReport ==============================================================%s\n", color["bold"], color["reset"])
+	fmt.Printf("\tNamespaces: %d/%d\n", r.namespaces.Checked, r.namespaces.Total)
 	fmt.Printf("\tPods: %d\n", len(r.objectsList.pods))
 	fmt.Printf("\tContainers: %d\n", len(r.objectsList.containers))
 	fmt.Printf("\tImages: %d\n", len(r.objectsList.uniqueImages))
-	fmt.Printf("\tTargets: %d\n", len(r.targetslist))
+	if trivy && len(r.objectsList.uniqueImages) > 0 {
+		fmt.Printf("\tTargets: %d\n", len(r.targetslist))
+	}
+	fmt.Println("")
 
-	for _, image := range r.objectsList.uniqueImages {
-		fmt.Printf("\tImage: %s\n", image.Fulltag)
-		fmt.Printf("\t\t%sTotal    : %d/%d%s\n", color["white"], image.Summary.Total, image.Summary.Fixed, color["reset"])
-		fmt.Printf("\t\t%sCritical : %d/%d%s\n", color["red"], image.Summary.Severity.Critical.Total, image.Summary.Severity.Critical.Fixed, color["reset"])
-		fmt.Printf("\t\t%sHigh     : %d/%d%s\n", color["yellow"], image.Summary.Severity.High.Total, image.Summary.Severity.High.Fixed, color["reset"])
-		fmt.Printf("\t\t%sMedium   : %d/%d%s\n", color["cyan"], image.Summary.Severity.Medium.Total, image.Summary.Severity.Medium.Fixed, color["reset"])
-		fmt.Printf("\t\t%sLow      : %d/%d%s\n", color["darkgray"], image.Summary.Severity.Low.Total, image.Summary.Severity.Low.Fixed, color["reset"])
-		fmt.Printf("\t\t%sUnknown  : %d/%d%s\n", color["lightgray"], image.Summary.Severity.Unknown.Total, image.Summary.Severity.Unknown.Fixed, color["reset"])
+	if len(r.kubeauditReports) > 0 {
+		fmt.Printf("%sKubeaudit ===========================================================%s\n", color["bold"], color["reset"])
+		for _, kubekubeauditReports := range r.kubeauditReports {
+			if len(kubekubeauditReports) > 0 {
+				fmt.Printf("\n\tNamespace: %s\n", kubekubeauditReports[0].ResourceNamespace)
+				for _, kubeauditReport := range kubekubeauditReports {
+					fmt.Printf("\t  %s: %s %s %s\033[0m\n", kubeauditReport.AuditType, kubeauditReport.ResourceName, color[kubeauditReport.SeverityLevel], kubeauditReport.AuditName)
+				}
+			}
+		}
 		fmt.Println("")
 	}
 
-	fmt.Printf("%sReport Summary ===================================%s\n", color["bold"], color["reset"])
-	fmt.Printf("\t       Total   : %v\n", r.reportSummary.VulnTotal)
-	fmt.Printf("\t       Fixed   : %v\n", r.reportSummary.VulnFixed)
-	fmt.Printf("\t       Critical: %d\n", r.reportSummary.VulnCritical)
-	fmt.Printf("\t       High    : %d\n", r.reportSummary.VulnHigh)
-	fmt.Printf("\t       Medium  : %d\n", r.reportSummary.VulnMedium)
-	fmt.Printf("\t       Low     : %d\n", r.reportSummary.VulnLow)
-	fmt.Printf("\t       Unknown : %d\n", r.reportSummary.VulnUnknown)
+	if trivy && len(r.objectsList.uniqueImages) > 0 {
+		fmt.Printf("%sImage Vulnerabilities ===============================================%s\n", color["bold"], color["reset"])
+
+		for _, image := range r.objectsList.uniqueImages {
+			fmt.Printf("\tImage: %s\n", image.Fulltag)
+			fmt.Printf("\t\t%sTotal    : %d/%d%s\n", color["white"], image.Summary.Total, image.Summary.Fixed, color["reset"])
+			fmt.Printf("\t\t%sCritical : %d/%d%s\n", color["red"], image.Summary.Severity.Critical.Total, image.Summary.Severity.Critical.Fixed, color["reset"])
+			fmt.Printf("\t\t%sHigh     : %d/%d%s\n", color["yellow"], image.Summary.Severity.High.Total, image.Summary.Severity.High.Fixed, color["reset"])
+			fmt.Printf("\t\t%sMedium   : %d/%d%s\n", color["cyan"], image.Summary.Severity.Medium.Total, image.Summary.Severity.Medium.Fixed, color["reset"])
+			fmt.Printf("\t\t%sLow      : %d/%d%s\n", color["darkgray"], image.Summary.Severity.Low.Total, image.Summary.Severity.Low.Fixed, color["reset"])
+			fmt.Printf("\t\t%sUnknown  : %d/%d%s\n", color["lightgray"], image.Summary.Severity.Unknown.Total, image.Summary.Severity.Unknown.Fixed, color["reset"])
+			fmt.Println("")
+		}
+
+		fmt.Printf("%sVulnerability Summary ===============================================%s\n", color["bold"], color["reset"])
+		fmt.Printf("\t       Total   : %v\n", r.reportSummary.VulnTotal)
+		fmt.Printf("\t       Fixed   : %v\n", r.reportSummary.VulnFixed)
+		fmt.Printf("\t       Critical: %d\n", r.reportSummary.VulnCritical)
+		fmt.Printf("\t       High    : %d\n", r.reportSummary.VulnHigh)
+		fmt.Printf("\t       Medium  : %d\n", r.reportSummary.VulnMedium)
+		fmt.Printf("\t       Low     : %d\n", r.reportSummary.VulnLow)
+		fmt.Printf("\t       Unknown : %d\n", r.reportSummary.VulnUnknown)
+	}
 }
