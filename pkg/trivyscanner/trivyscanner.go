@@ -2,6 +2,8 @@ package trivyscanner
 
 import (
 	"context"
+	"fmt"
+	"os"
 	"time"
 
 	dbTypes "github.com/aquasecurity/trivy-db/pkg/types"
@@ -26,13 +28,34 @@ func GetOption() artifact.Option {
 
 	//file, _ := os.Create("/tmp/trivy.txt")
 	//file, _ := os.Create(os.DevNull)
+
+	trivy_debug, exists := os.LookupEnv("TRIVY_DEBUG")
+	var debug bool
+	debug = false
+	if exists {
+		if trivy_debug == "true" {
+			debug = true
+		}
+	}
+	fmt.Println("TRIVY_DEBUG:", debug)
+
+	trivy_quiet, exists := os.LookupEnv("TRIVY_QUIET")
+	var quiet bool
+	quiet = true
+	if exists {
+		if trivy_quiet == "false" {
+			quiet = false
+		}
+	}
+	fmt.Println("TRIVY_QUIET:", quiet)
+
 	option := artifact.Option{
 		GlobalOption: option.GlobalOption{
 			Context:    nil,
 			Logger:     nil,
 			AppVersion: "1",
-			Quiet:      true,
-			Debug:      false,
+			Quiet:      quiet,
+			Debug:      debug,
 			CacheDir:   "/tmp/trivy",
 		},
 		ArtifactOption: option.ArtifactOption{

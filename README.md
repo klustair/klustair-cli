@@ -40,6 +40,8 @@ export TRIVY_PASSWORD=....
 export TRIVY_REGISTRY_TOKEN=....
 export TRIVY_INSECURE=false
 export TRIVY_NON_SSL=false
+export TRIVY_DEBUG=false
+export TRIVY_QUIET=true
 ``
 
 ## Installation
