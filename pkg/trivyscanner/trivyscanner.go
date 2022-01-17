@@ -2,7 +2,6 @@ package trivyscanner
 
 import (
 	"context"
-	"fmt"
 	"os"
 	"time"
 
@@ -37,7 +36,6 @@ func GetOption() artifact.Option {
 			debug = true
 		}
 	}
-	fmt.Println("TRIVY_DEBUG:", debug)
 
 	trivy_quiet, exists := os.LookupEnv("TRIVY_QUIET")
 	var quiet bool
@@ -47,7 +45,6 @@ func GetOption() artifact.Option {
 			quiet = false
 		}
 	}
-	fmt.Println("TRIVY_QUIET:", quiet)
 
 	option := artifact.Option{
 		GlobalOption: option.GlobalOption{
@@ -97,7 +94,7 @@ func GetOption() artifact.Option {
 				"vuln",
 				"config",
 			},
-			Output: nil, //nil, //os.Stdout, //file
+			Output: os.Stdout, //nil, //os.Stdout, //file
 			Severities: []dbTypes.Severity{
 				0,
 				1,
