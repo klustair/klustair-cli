@@ -5,8 +5,8 @@ import (
 	"fmt"
 
 	"github.com/google/uuid"
-	"github.com/klustair/klustair-go/pkg/api"
-	"github.com/klustair/klustair-go/pkg/kubeaudit"
+	"github.com/klustair/klustair-cli/pkg/api"
+	"github.com/klustair/klustair-cli/pkg/kubeaudit"
 	log "github.com/sirupsen/logrus"
 )
 

@@ -1,7 +1,7 @@
 package app
 
 import (
-	"github.com/klustair/klustair-go/pkg/klustair"
+	"github.com/klustair/klustair-cli/pkg/klustair"
 	"github.com/urfave/cli/v2"
 )
 

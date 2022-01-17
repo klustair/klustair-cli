@@ -5,7 +5,7 @@ The Klustair client searches your Kubernetes namespaces for the used images and 
 
 ### Related Klustair projects: 
 - <a href="https://github.com/mms-gianni/klustair-frontend">Klustair Frontend</a> to view the scanner results
-- <a href="https://github.com/mms-gianni/klustair-helm">Klustair Helm charts</a> to spin up Anchore and Klustair
+- <a href="https://github.com/mms-gianni/klustair-helm">Klustair Helm charts</a> to run Klustair Cronjob, API and Frontend
 
 ### Related opensource projects
 - <a href="https://github.com/aquasecurity/trivy">trivy</a> A Simple and Comprehensive Vulnerability Scanner for Containers and other Artifacts
@@ -35,24 +35,28 @@ optional arguments:
 
 ## ENV vars (not set by commandline)
 ```
-export TRIVY_.....=....
-```
+export TRIVY_USERNAME=....
+export TRIVY_PASSWORD=....
+export TRIVY_REGISTRY_TOKEN=....
+export TRIVY_INSECURE=false
+export TRIVY_NON_SSL=false
+``
 
 ## Installation
 ```
-go get -v github.com/klustair/klustair-go
+go get -v github.com/klustair/klustair-cli
 ```
 
 ## develop
 ```
-git clone git@github.com:klustair/klustair-go.git
-cd klustair-go
+git clone git@github.com:klustair/klustair-cli.git
+cd klustair-cli
 go run cmd/klustair/main.go
 ```
 
 ## build
 ```
-go build -o bin/klustair cmd/klustair/main.go
+go build -o bin/klustair-cli cmd/klustair/main.go
 ```
 
 ## FAQ

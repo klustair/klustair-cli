@@ -5,7 +5,7 @@ import (
 
 	log "github.com/sirupsen/logrus"
 
-	"github.com/klustair/klustair-go/pkg/kubectl"
+	"github.com/klustair/klustair-cli/pkg/kubectl"
 	"github.com/urfave/cli/v2"
 )
 

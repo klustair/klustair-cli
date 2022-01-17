@@ -7,7 +7,7 @@ import (
 	"github.com/aquasecurity/trivy/pkg/report"
 	v1 "github.com/google/go-containerregistry/pkg/v1"
 	"github.com/google/uuid"
-	"github.com/klustair/klustair-go/pkg/trivyscanner"
+	"github.com/klustair-cli/pkg/trivyscanner"
 	log "github.com/sirupsen/logrus"
 )
 

@@ -5,7 +5,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/klustair/klustair-go/cmd/klustair/app"
+	"github.com/klustair/klustair-cli/cmd/klustair/app"
 )
 
 //go:embed VERSION
