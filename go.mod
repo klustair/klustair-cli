@@ -1,4 +1,4 @@
-module github.com/klustair-cli
+module github.com/klustair/klustair-cli
 
 go 1.17
 
