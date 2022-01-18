@@ -1,6 +1,7 @@
 package kubeaudit
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/Shopify/kubeaudit"
@@ -25,7 +26,24 @@ type Auditor struct {
 }
 
 func (a *Auditor) SetConfig(auditors []string) kubeauditconfig.KubeauditConfig {
-	auditoorsmap := make(map[string]bool)
+	//auditoorsmap := make(map[string]bool)
+	auditoorsmap := map[string]bool{
+		"apparmor":     false,
+		"asat":         false,
+		"capabilities": false,
+		"hostns":       false,
+		"image":        false,
+		"limits":       false,
+		"mountds":      false,
+		"mounts":       false,
+		"netpols":      false,
+		"nonroot":      false,
+		"privesc":      false,
+		"privileged":   false,
+		"rootfs":       false,
+		"seccomp":      false,
+	}
+
 	for _, a := range auditors {
 		log.Debugf("auditor: %+v\n", a)
 		auditoorsmap[a] = true
@@ -36,7 +54,11 @@ func (a *Auditor) SetConfig(auditors []string) kubeauditconfig.KubeauditConfig {
 }
 
 func (a *Auditor) Audit(namespace string) []KubeauditReport {
-	auditors, err := all.Auditors(kubeauditconfig.KubeauditConfig{})
+	fmt.Printf("auditors: %+v\n", a)
+	auditors, err := all.Auditors(a.KubeauditConfig)
+	for _, a := range auditors {
+		fmt.Printf("auditors: %+v\n", a)
+	}
 	if err != nil {
 		panic(err)
 	}
