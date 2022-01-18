@@ -1,0 +1,17 @@
+
+   
+version: "3.9"
+services:
+  klustair-cli:
+    build: .
+    container_name: klustair-cli
+    entrypoint:
+    - tail
+    - -f
+    - "/dev/null"
+    image: klustair/klustair-cli
+    environment:
+      - KUBECONFIG=/root/.kube/config.d/myConfig
+    volumes:
+      - ./kubeconfig:/root/.kube/config.d
+

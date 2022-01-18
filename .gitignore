@@ -2,3 +2,5 @@ main
 bin/*
 notes.txt
 dist/
+docker/kubeconfig/*
+!.gitkeep
