@@ -1,7 +1,6 @@
 package kubeaudit
 
 import (
-	"fmt"
 	"time"
 
 	"github.com/Shopify/kubeaudit"
@@ -54,11 +53,7 @@ func (a *Auditor) SetConfig(auditors []string) kubeauditconfig.KubeauditConfig {
 }
 
 func (a *Auditor) Audit(namespace string) []KubeauditReport {
-	fmt.Printf("auditors: %+v\n", a)
 	auditors, err := all.Auditors(a.KubeauditConfig)
-	for _, a := range auditors {
-		fmt.Printf("auditors: %+v\n", a)
-	}
 	if err != nil {
 		panic(err)
 	}
