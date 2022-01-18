@@ -66,5 +66,4 @@ go build -o bin/klustair-cli cmd/klustair/main.go
 ## FAQ
 Why is the klustair client so big (~80MB)? 
  - it contains the trivy binary(~32MB) and the kubeaudit binary (~30MB).
-
  
