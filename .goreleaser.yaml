@@ -31,3 +31,12 @@ changelog:
     exclude:
       - '^docs:'
       - '^test:'
+brews:
+  -
+    tap:
+      owner: klustair
+      name: homebrew-klustair-cli
+    homepage: "https://github.com/klustair/klustair-cli"
+    description: "Scan all images in your Kubernetes cluster with Trivy and check your configuration with Kubeaudit"
+    test: |
+      system "#{bin}/klustair-cli", "--version"
