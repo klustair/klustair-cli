@@ -46,6 +46,11 @@ func (a *Auditor) SetConfig(auditors []string) kubeauditconfig.KubeauditConfig {
 	for _, a := range auditors {
 		log.Debugf("auditor: %+v\n", a)
 		auditoorsmap[a] = true
+		if a == "all" {
+			for a := range auditoorsmap {
+				auditoorsmap[a] = true
+			}
+		}
 	}
 	a.KubeauditConfig.EnabledAuditors = auditoorsmap
 
