@@ -11,12 +11,21 @@ The Klustair client searches your Kubernetes namespaces for the used images and 
 - <a href="https://github.com/aquasecurity/trivy">trivy</a> A Simple and Comprehensive Vulnerability Scanner for Containers and other Artifacts
 - <a href="https://github.com/Shopify/kubeaudit">kubeaudit</a> kubeaudit helps you audit your Kubernetes clusters against common security controls
 
+## Installation 
+### Binaries
+Download the binaries from the [releases](https://github.com/klustair/klustair-cli/releases) page.
+Unpack the archive and move the `klustair-cli` binary to your bin `$PATH` (on UNIX-y systems, /usr/local/bin or the like). Make sure it has execution bits turned on.
+
+### Homebrew
+```bash
+brew tap klustair/klustair-cli 
+brew install klustair-cli
+```
 ## Usage
 ```
-klustair [global options]
+klustair-cli [global options]
 
 optional arguments:
-   --verbose, -V                          increase output verbosity (default: false) [$KLUSTAIR_VERBOSE]
    --debug, -d                            debug mode (default: false) [$KLUSTAIR_DEBUG]
    --namespaces value, -n value           Coma separated whitelist of Namespaces to check [$KLUSTAIR_NAMESPACES]
    --namespacesblacklist value, -N value  Coma separated whitelist of Namespaces to check [$KLUSTAIR_NAMESPACESBLACKLIST]
