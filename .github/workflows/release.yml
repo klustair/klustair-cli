@@ -48,7 +48,8 @@ jobs:
 
       - name: Build images
         run: | 
-          docker build . --file docker/Dockerfile --tag ${IMAGE_NAME}
+          VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+          docker build . --file docker/Dockerfile --tag ${IMAGE_NAME} --build-arg VERSION=${VERSION}
 
       - name: Log into registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
