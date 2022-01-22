@@ -26,12 +26,13 @@ brew install klustair-cli
 klustair-cli [global options]
 
 optional arguments:
+   --verbose, -V                          increase output verbosity (default: false) [$KLUSTAIR_VERBOSE]
    --debug, -d                            debug mode (default: false) [$KLUSTAIR_DEBUG]
    --namespaces value, -n value           Coma separated whitelist of Namespaces to check [$KLUSTAIR_NAMESPACES]
    --namespacesblacklist value, -N value  Coma separated whitelist of Namespaces to check [$KLUSTAIR_NAMESPACESBLACKLIST]
    --kubeaudit value, -k value            Coma separated list of audits to run. (disable: "none") [$KLUSTAIR_KUBEAUDIT]
    --trivy, -t                            Run Trivy vulnerability checks (default: false) [$KLUSTAIR_TRIVY]
-   --label value, -l value                A optional title for your run [$KLUSTAIR_NAMESPACESBLACKLIST]
+   --label value, -l value                A optional title for your run [$KLUSTAIR_LABEL]
    --repocredentialspath value, -c value  Path to repo credentials for trivy [$KLUSTAIR_REPOCREDENTIALSPATH]
    --limitdate value, --ld value          Remove reports older than X days (default: 0) [$KLUSTAIR_LIMITDATE]
    --limitnr value, --ln value            Keep only X reports (default: 0) [$KLUSTAIR_LIMITNR]

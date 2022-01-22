@@ -38,7 +38,7 @@ var (
 		Aliases: []string{"l"},
 		Value:   "",
 		Usage:   "A optional title for your run",
-		EnvVars: []string{"KLUSTAIR_NAMESPACESBLACKLIST"},
+		EnvVars: []string{"KLUSTAIR_LABEL"},
 	}
 
 	trivycredentialspathFlag = cli.StringFlag{
