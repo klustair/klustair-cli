@@ -48,7 +48,12 @@ jobs:
 
       - name: Build images
         run: | 
+          # Strip git ref prefix from version
           VERSION=$(echo "${{ github.ref }}" | sed -e 's,.*/\(.*\),\1,')
+
+          # Strip "v" prefix from tag name
+          [[ "${{ github.ref }}" == "refs/tags/"* ]] && VERSION=$(echo $VERSION | sed -e 's/^v//')
+
           docker build --build-arg VERSION=${VERSION} . --file docker/Dockerfile --tag ${IMAGE_NAME}
 
       - name: Log into registry
