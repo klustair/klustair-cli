@@ -2,6 +2,7 @@ package kubectl
 
 import (
 	"context"
+	"os"
 
 	v1 "k8s.io/api/core/v1"
 	"k8s.io/client-go/kubernetes"
@@ -35,9 +36,11 @@ func NewKubectlClient() *Client {
 
 func GetClientset() (*kubernetes.Clientset, bool) {
 
+	_, kubeconfigEnv := os.LookupEnv("KUBECONFIG")
+
 	// creates the in-cluster config
 	config, err := rest.InClusterConfig()
-	if err == nil {
+	if err == nil && !kubeconfigEnv {
 		log.Debug("kubectl: in-cluster config")
 		// creates the clientset
 		clientset, err := kubernetes.NewForConfig(config)
