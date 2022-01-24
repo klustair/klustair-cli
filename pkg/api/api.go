@@ -25,11 +25,15 @@ func NewApiClient(apiHost string, apiToken string) *ApiClient {
 
 func (c *ApiClient) Submit(method string, path string, data string, schema string) error {
 
+	/* TODO : Disable validate for now, since jsons are not included after build
+	// need a better ide here
 	err := c.validate(data, schema)
 	if err != nil {
 		log.Errorln("Error validating json: ", err, schema)
 		return err
 	}
+	*/
+
 	//fmt.Printf("sendRequest: %+v\n", data)
 	//return nil
 
