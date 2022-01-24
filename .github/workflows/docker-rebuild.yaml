@@ -2,7 +2,7 @@ name: Docker rebuild
 
 on: 
   schedule:
-    - cron: '15 20 * * 0'
+    - cron: '15 20 * * 1'
   workflow_dispatch:
 
 env:
@@ -25,7 +25,13 @@ jobs:
 
       - name: Build image ${{ matrix.versiontag }}
         run: | 
-          docker build . --file docker/Dockerfile --tag ${IMAGE_NAME}
+          # Strip git ref prefix from version
+          VERSION=$(echo "${{ matrix.versiontag }}" | sed -e 's,.*/\(.*\),\1,')
+
+          # Strip "v" prefix from tag name
+          VERSION=$(echo $VERSION | sed -e 's/^v//')
+
+          docker build --build-arg VERSION=${VERSION} . --file docker/Dockerfile --tag ${IMAGE_NAME}
 
       - name: Log into registry
         run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
