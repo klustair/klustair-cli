@@ -22,7 +22,7 @@ var (
 	kubeauditFlag = cli.StringFlag{
 		Name:    "kubeaudit",
 		Aliases: []string{"k"},
-		Usage:   "Coma separated list of audits to run. (disable: \"none\")",
+		Usage:   "Coma separated list of audits to run.",
 		EnvVars: []string{"KLUSTAIR_KUBEAUDIT"},
 	}
 
@@ -77,7 +77,7 @@ var (
 		Name:    "apihost",
 		Aliases: []string{"H"},
 		Value:   "",
-		Usage:   "Remote API-host address [example: https://localhost:8443]",
+		Usage:   "Remote API-host address (example: https://localhost:8443)",
 		EnvVars: []string{"KLUSTAIR_APIHOST"},
 	}
 
