@@ -1,5 +1,5 @@
 FROM alpine:3.15
-ARG VERSION=0.7.0
+ARG VERSION=0.7.1
 
 RUN echo "install version ${VERSION}" && \
     wget https://github.com/klustair/klustair-cli/releases/download/v${VERSION}/klustair-cli_${VERSION}_Linux_i386.tar.gz  && \
