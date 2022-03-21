@@ -7,7 +7,6 @@ import (
 	"net/http"
 	"strings"
 
-	"github.com/miladibra10/vjson"
 	log "github.com/sirupsen/logrus"
 )
 
@@ -89,6 +88,7 @@ func (c *ApiClient) Submit(method string, path string, data string, schema strin
 	return nil
 }
 
+/*
 func (c *ApiClient) validate(json string, schema string) error {
 
 	sma, err := vjson.ReadFromFile("./pkg/api/schema/" + schema + ".json")
@@ -104,3 +104,4 @@ func (c *ApiClient) validate(json string, schema string) error {
 	}
 	return nil
 }
+*/
