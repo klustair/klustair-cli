@@ -50,8 +50,8 @@ func (r *Report) Init(label string, whitelist []string, blacklist []string, triv
 
 		for _, namespace := range r.namespaces.Namespaces {
 			log.Infof("Kubeaudit on namespace: %+v", namespace.Name)
-			report := k.Audit(namespace.Name)
 			k.Klustair.NamespaceUid = namespace.Uid
+			report := k.Audit(namespace.Name)
 
 			r.kubeauditReports = append(r.kubeauditReports, report)
 		}
