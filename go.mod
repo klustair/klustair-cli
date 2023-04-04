@@ -57,7 +57,6 @@ require (
 	github.com/cenkalti/backoff v2.2.1+incompatible // indirect
 	github.com/cespare/xxhash/v2 v2.1.2 // indirect
 	github.com/cheggaaa/pb/v3 v3.0.3 // indirect
-	github.com/containerd/containerd v1.5.8 // indirect
 	github.com/containerd/stargz-snapshotter/estargz v0.10.1 // indirect
 	github.com/containerd/typeurl v1.0.2 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.1 // indirect
@@ -65,7 +64,7 @@ require (
 	github.com/dgryski/go-rendezvous v0.0.0-20200823014737-9f7001d12a5f // indirect
 	github.com/docker/cli v20.10.12+incompatible // indirect
 	github.com/docker/distribution v2.7.1+incompatible // indirect
-	github.com/docker/docker v20.10.12+incompatible // indirect
+	github.com/docker/docker v20.10.24+incompatible // indirect
 	github.com/docker/docker-credential-helpers v0.6.4 // indirect
 	github.com/docker/go-connections v0.4.0 // indirect
 	github.com/docker/go-units v0.4.0 // indirect
